@@ -12,11 +12,11 @@ import { AgentHeader } from "@/components/dashboard/agent-header";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { QuickAction } from "@/components/dashboard/quick-action";
-import { Property, PropertyCard } from "@/components/dashboard/property-card";
+import { AgentProperty, AgentPropertyCard } from "@/components/dashboard/agent-property-card";
 import { Colors } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
-const MOCK_PROPERTIES: Property[] = [
+const MOCK_PROPERTIES: AgentProperty[] = [
   {
     id: "1",
     title: "4Bedroom apartment",
@@ -24,6 +24,9 @@ const MOCK_PROPERTIES: Property[] = [
     location: "Ikorodu, Lagos",
     price: "10,00000",
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400",
+    status: "Active",
+    views: 1200,
+    inquiries: 15,
   },
   {
     id: "2",
@@ -32,6 +35,9 @@ const MOCK_PROPERTIES: Property[] = [
     location: "Victoria Island, Lagos",
     price: "8,50000",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400",
+    status: "Under Offer",
+    views: 840,
+    inquiries: 8,
   },
 ];
 
@@ -44,6 +50,8 @@ export default function AgentHomeScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const router = useRouter();
+  
+  const [isListingsExpanded, setIsListingsExpanded] = useState(true);
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -91,17 +99,26 @@ export default function AgentHomeScreen() {
           ))}
         </View>
 
-        {/* My Active Listings */}
-        <SectionHeader title="My Active Listings" actionText="Manage" onAction={() => router.push("/(agent)/listings")} />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalList}
+        {/* My Active Listings Dropdown */}
+        <TouchableOpacity 
+          style={styles.dropdownHeader} 
+          onPress={() => setIsListingsExpanded(!isListingsExpanded)}
         >
-          {MOCK_PROPERTIES.map((item) => (
-            <PropertyCard key={item.id} property={item} />
-          ))}
-        </ScrollView>
+          <ThemedText type="subtitle" style={styles.dropdownTitle}>My Active Listings</ThemedText>
+          <Ionicons 
+            name={isListingsExpanded ? "chevron-up" : "chevron-down"} 
+            size={24} 
+            color={theme.text} 
+          />
+        </TouchableOpacity>
+        
+        {isListingsExpanded && (
+          <View style={styles.listingsContainer}>
+            {MOCK_PROPERTIES.map((item) => (
+              <AgentPropertyCard key={item.id} property={item} />
+            ))}
+          </View>
+        )}
 
       </ScrollView>
     </ThemedView>
@@ -152,5 +169,18 @@ const styles = StyleSheet.create({
   },
   messageTime: {
     fontSize: 10,
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: Spacing.four,
+    marginBottom: Spacing.three,
+  },
+  dropdownTitle: {
+    // any specific title styling
+  },
+  listingsContainer: {
+    marginTop: Spacing.two,
   }
 });
