@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 export function UserHeader() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export function UserHeader() {
 
       {/* Right Side Actions */}
       <View style={styles.rightActions}>
+        <ThemeSwitcher />
+        
         {/* Notification Bell */}
         <TouchableOpacity style={styles.notificationBtn}>
           <Ionicons name="notifications-outline" size={20} color="#1E293B" />

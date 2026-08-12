@@ -14,6 +14,7 @@ import { BackButton } from "@/components/back-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors, Spacing } from "@/constants/theme";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 interface Chat {
   id: string;
@@ -110,6 +111,7 @@ export default function MessagesScreen() {
       <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.headerRow}>
           <BackButton />
+          <ThemeSwitcher />
         </View>
 
         {/* Segmented Control */}
@@ -148,6 +150,9 @@ const styles = StyleSheet.create({
   headerRow: {
     paddingHorizontal: Spacing.four,
     marginBottom: Spacing.two,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   segmentContainer: {
     flexDirection: "row",
