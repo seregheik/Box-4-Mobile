@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#34A8DB', // Using secondary blue for action links
+    color: '#0495CC', // Using secondary blue for action links
   },
 });

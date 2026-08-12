@@ -25,7 +25,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         <Image source={{ uri: property.image }} style={styles.image} />
         
         <TouchableOpacity style={styles.favoriteBtn}>
-          <Ionicons name="heart-outline" size={16} color="#C00000" />
+          <Ionicons name="heart-outline" size={16} color="#D60202" />
         </TouchableOpacity>
 
         <View style={styles.priceBadge}>
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     right: 8,
-    backgroundColor: '#C00000',
+    backgroundColor: '#D60202',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,

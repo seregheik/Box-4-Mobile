@@ -12,7 +12,7 @@ export default function AgentLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.tintRed,
+        tabBarActiveTintColor: colors.tintBlue,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarButton: ({ ref, ...props }) => (
           <Pressable

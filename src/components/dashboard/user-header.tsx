@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#34A8DB",
+    borderColor: "#0495CC",
   },
   notificationDot: {
     position: "absolute",
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#C00000",
+    backgroundColor: "#D60202",
   },
   avatar: {
     width: 40,
