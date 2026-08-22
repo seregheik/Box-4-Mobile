@@ -64,79 +64,59 @@ export default function ProfileScreen() {
           <TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.backgroundElement }]} onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color={theme.text} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.iconButton, { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.tintBlue }]}>
-            <Ionicons name="notifications-outline" size={24} color={theme.tintBlue} />
+          <ThemedText style={styles.headerTitle}>Profile</ThemedText>
+          <TouchableOpacity style={[styles.iconButton, { backgroundColor: 'transparent' }]}>
+            <Ionicons name="notifications-outline" size={24} color={theme.text} />
             <View style={styles.notificationDot} />
           </TouchableOpacity>
         </View>
 
-        {/* Profile Info */}
+        {/* Hero Profile Section */}
         <View style={styles.profileSection}>
-          <Image 
-            source={{ uri: avatarUrl }} 
-            style={styles.avatar} 
-          />
+          <View style={[styles.avatarContainer, { shadowColor: theme.tintBlue }]}>
+            <Image 
+              source={{ uri: avatarUrl }} 
+              style={styles.avatar} 
+            />
+          </View>
           <ThemedText style={styles.name}>{name}</ThemedText>
-          <ThemedText style={styles.email} themeColor="textSecondary">{email}</ThemedText>
+          <ThemedText style={[styles.email, { color: theme.tintBlue }]}>{email}</ThemedText>
         </View>
 
-        {/* Stats */}
-        <View style={[styles.statsContainer, { borderColor: theme.tintBlue }]}>
-          <View style={styles.statBox}>
-            <ThemedText style={styles.statNumber}>-</ThemedText>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Listings</ThemedText>
-          </View>
-          <View style={[styles.statDivider, { backgroundColor: theme.tintBlue }]} />
-          <View style={styles.statBox}>
-            <ThemedText style={styles.statNumber}>-</ThemedText>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Sold</ThemedText>
-          </View>
-        </View>
-
-        {/* Personal Information */}
+        {/* Personal Information Cards */}
         <View style={styles.infoSection}>
-          <ThemedText style={styles.sectionTitle}>Personal Information</ThemedText>
-          
-          <InfoRow icon="call-outline" label="Phone" value={profile?.phone_number || 'Not provided'} />
-          <InfoRow icon="location-outline" label="Location" value={location} />
-          {profile?.agency_name && <InfoRow icon="business-outline" label="Agency" value={profile.agency_name} />}
-          {profile?.license_number && <InfoRow icon="id-card-outline" label="License" value={profile.license_number} />}
-          {profile?.rating !== null && profile?.rating !== undefined && <InfoRow icon="star-outline" label="Rating" value={`${profile.rating} / 5.0`} />}
+          <ThemedText style={styles.sectionTitle}>Information</ThemedText>
+          <View style={styles.cardsGrid}>
+            <InfoCard icon="call" label="Phone" value={profile?.phone_number || 'N/A'} />
+            <InfoCard icon="location" label="Location" value={location} />
+            <InfoCard icon="business" label="Agency" value={profile?.agency_name || 'Independent'} />
+            {profile?.license_number && <InfoCard icon="id-card" label="License" value={profile.license_number} />}
+            {profile?.rating !== null && profile?.rating !== undefined && (
+              <InfoCard icon="star" label="Rating" value={`${profile.rating} / 5.0`} color="#FFB300" />
+            )}
+          </View>
+
           {profile?.bio && (
-            <View style={styles.bioContainer}>
-              <ThemedText style={styles.bioLabel} themeColor="textSecondary">Bio</ThemedText>
+            <ThemedView type="backgroundElement" style={styles.bioCard}>
+              <View style={styles.bioHeader}>
+                <Ionicons name="person-circle" size={20} color={theme.tintBlue} style={styles.cardIcon} />
+                <ThemedText style={styles.cardLabel} themeColor="textSecondary">Bio</ThemedText>
+              </View>
               <ThemedText style={styles.bioText}>{profile.bio}</ThemedText>
-            </View>
+            </ThemedView>
           )}
         </View>
 
-        {/* Menu Items */}
-        <View style={styles.menuContainer}>
-          <MenuItem 
-            icon="settings-outline" 
-            label="Account settings" 
-            onPress={() => router.push('/(agent)/profile/account-settings')} 
-          />
-          <MenuItem 
-            icon="help-circle-outline" 
-            label="Get help" 
-            onPress={() => {}} 
-          />
-          <MenuItem 
-            icon="document-text-outline" 
-            label="Legal" 
-            onPress={() => {}} 
-          />
-          <MenuItem 
-            icon="shield-checkmark-outline" 
-            label="Verify identity" 
-            onPress={() => {}} 
-          />
-          <MenuItem 
-            icon="arrow-up-outline" 
-            label="Upgrade account" 
-            onPress={() => {}} 
-          />
+        {/* Unified Settings Block */}
+        <View style={styles.settingsSection}>
+          <ThemedText style={styles.sectionTitle}>Settings</ThemedText>
+          <ThemedView type="backgroundElement" style={styles.settingsBlock}>
+            <MenuItem icon="settings" label="Account settings" onPress={() => router.push('/(agent)/profile/account-settings')} isFirst />
+            <MenuItem icon="help-buoy" label="Get help" onPress={() => {}} />
+            <MenuItem icon="document-text" label="Legal" onPress={() => {}} />
+            <MenuItem icon="shield-checkmark" label="Verify identity" onPress={() => {}} />
+            <MenuItem icon="arrow-up-circle" label="Upgrade account" onPress={() => {}} isLast />
+          </ThemedView>
         </View>
 
       </ScrollView>
@@ -144,25 +124,32 @@ export default function ProfileScreen() {
   );
 }
 
-function MenuItem({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap, label: string, onPress: () => void }) {
+function InfoCard({ icon, label, value, color }: { icon: keyof typeof Ionicons.glyphMap, label: string, value: string, color?: string }) {
   const theme = useTheme();
+  const iconColor = color || theme.tintBlue;
+  
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-      <Ionicons name={icon} size={24} color={theme.text} style={styles.menuIcon} />
-      <ThemedText style={styles.menuLabel}>{label}</ThemedText>
-    </TouchableOpacity>
+    <ThemedView type="backgroundElement" style={styles.infoCard}>
+      <View style={styles.cardHeader}>
+        <ThemedText style={styles.cardLabel} themeColor="textSecondary" numberOfLines={1}>{label}</ThemedText>
+        <Ionicons name={icon} size={16} color={iconColor} />
+      </View>
+      <ThemedText style={styles.cardValue} numberOfLines={2}>{value}</ThemedText>
+    </ThemedView>
   );
 }
 
-function InfoRow({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap, label: string, value: string }) {
+function MenuItem({ icon, label, onPress, isFirst = false, isLast = false }: { icon: keyof typeof Ionicons.glyphMap, label: string, onPress: () => void, isFirst?: boolean, isLast?: boolean }) {
   const theme = useTheme();
   return (
-    <View style={styles.infoRow}>
-      <Ionicons name={icon} size={20} color={theme.tintBlue} style={styles.infoIcon} />
-      <View style={styles.infoTextContainer}>
-        <ThemedText style={styles.infoLabel} themeColor="textSecondary">{label}</ThemedText>
-        <ThemedText style={styles.infoValue}>{value}</ThemedText>
-      </View>
+    <View style={[styles.menuItemWrapper, !isLast && { borderBottomColor: theme.border || '#ccc', borderBottomWidth: StyleSheet.hairlineWidth }]}>
+      <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
+        <View style={styles.menuItemLeft}>
+          <Ionicons name={icon} size={22} color={theme.text} style={styles.menuIcon} />
+          <ThemedText style={styles.menuLabel}>{label}</ThemedText>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -172,26 +159,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Spacing.four,
     paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: Spacing.four,
     marginBottom: Spacing.four,
   },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
   iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
   notificationDot: {
     position: 'absolute',
-    top: 12,
-    right: 14,
+    top: 10,
+    right: 12,
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -199,101 +190,114 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     alignItems: 'center',
-    marginBottom: Spacing.five,
+    marginBottom: Spacing.six,
+    paddingHorizontal: Spacing.four,
+  },
+  avatarContainer: {
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    marginBottom: Spacing.four,
+    backgroundColor: '#fff',
+    borderRadius: 60,
+    padding: 4,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: Spacing.three,
+    width: 112,
+    height: 112,
+    borderRadius: 56,
   },
   name: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     marginBottom: 4,
   },
   email: {
     fontSize: 14,
+    fontWeight: '600',
   },
-  statsContainer: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 0, 
-    marginHorizontal: Spacing.six,
+  infoSection: {
+    paddingHorizontal: Spacing.four,
     marginBottom: Spacing.six,
-    paddingVertical: Spacing.three,
-    backgroundColor: 'transparent',
   },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statDivider: {
-    width: 1,
-  },
-  statNumber: {
-    fontSize: 20,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-  },
-  menuContainer: {
+    marginBottom: Spacing.four,
     paddingHorizontal: Spacing.two,
+  },
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: Spacing.three,
+    marginBottom: Spacing.four,
+  },
+  infoCard: {
+    width: '48%',
+    padding: Spacing.four,
+    borderRadius: 20,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.two,
+  },
+  cardLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    flex: 1,
+    paddingRight: 4,
+  },
+  cardValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  bioCard: {
+    padding: Spacing.four,
+    borderRadius: 20,
+  },
+  bioHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.two,
+  },
+  cardIcon: {
+    marginRight: 6,
+  },
+  bioText: {
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  settingsSection: {
+    paddingHorizontal: Spacing.four,
+    marginBottom: Spacing.six,
+  },
+  settingsBlock: {
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  menuItemWrapper: {
+    paddingHorizontal: Spacing.four,
   },
   menuItem: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: Spacing.three,
-    marginBottom: Spacing.two,
+    paddingVertical: 18,
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   menuIcon: {
     marginRight: Spacing.three,
   },
   menuLabel: {
     fontSize: 16,
+    fontWeight: '600',
   },
-  infoSection: {
-    marginBottom: Spacing.six,
-    paddingHorizontal: Spacing.two,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: Spacing.four,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.four,
-  },
-  infoIcon: {
-    marginRight: Spacing.three,
-  },
-  infoTextContainer: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    marginBottom: 2,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  bioContainer: {
-    marginTop: Spacing.two,
-    paddingTop: Spacing.four,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#ccc',
-  },
-  bioLabel: {
-    fontSize: 12,
-    marginBottom: Spacing.two,
-  },
-  bioText: {
-    fontSize: 14,
-    lineHeight: 20,
-  }
 });
