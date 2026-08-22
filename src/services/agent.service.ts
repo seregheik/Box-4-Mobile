@@ -68,12 +68,27 @@ export interface AgentDashboardResponse {
   active_listings: Listing[];
 }
 
+export interface PaginatedListingsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Listing[];
+}
+
 export const AgentService = {
   /**
    * Fetch the agent dashboard data for the home screen
    */
   getDashboard: async (): Promise<AgentDashboardResponse> => {
     const response = await apiClient.get('/agents/dashboard/');
+    return response.data;
+  },
+
+  /**
+   * Fetch the agent's listings with pagination, filtering, and search
+   */
+  getMyListings: async (params?: { page?: number; page_size?: number; type?: string; search?: string }): Promise<PaginatedListingsResponse> => {
+    const response = await apiClient.get('/agents/properties/my-listings/', { params });
     return response.data;
   },
 };

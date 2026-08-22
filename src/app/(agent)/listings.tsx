@@ -1,10 +1,256 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { 
+  StyleSheet, 
+  View, 
+  FlatList, 
+  TextInput, 
+  TouchableOpacity, 
+  ActivityIndicator,
+  RefreshControl,
+  Keyboard
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { Spacing, Colors } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { AgentPropertyCard } from "@/components/dashboard/agent-property-card";
+import { AgentService, Listing } from "@/services/agent.service";
+
+const TABS = [
+  { id: "all", label: "All" },
+  { id: "luxury", label: "Luxury" },
+  { id: "residential", label: "Residential" },
+  { id: "commercial", label: "Commercial" },
+];
 
 export default function ListingsScreen() {
+  const insets = useSafeAreaInsets();
+  const theme = useTheme();
+
+  // State
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  // Debounce search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // Fetch listings
+  const fetchListings = async (pageNumber: number, shouldRefresh = false) => {
+    try {
+      if (pageNumber === 1 && !shouldRefresh) setIsLoading(true);
+
+      const response = await AgentService.getMyListings({
+        page: pageNumber,
+        page_size: 10,
+        type: activeTab,
+        search: debouncedSearchQuery,
+      });
+
+      if (pageNumber === 1) {
+        setListings(response.results);
+      } else {
+        setListings((prev) => [...prev, ...response.results]);
+      }
+
+      setHasMore(response.next !== null);
+      setPage(pageNumber);
+    } catch (error) {
+      console.error("Failed to fetch listings:", error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+      setIsFetchingMore(false);
+    }
+  };
+
+  // React to filter/search changes
+  useEffect(() => {
+    fetchListings(1);
+  }, [activeTab, debouncedSearchQuery]);
+
+  const onRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    fetchListings(1, true);
+  }, [activeTab, debouncedSearchQuery]);
+
+  const loadMore = () => {
+    if (!hasMore || isFetchingMore || isLoading) return;
+    setIsFetchingMore(true);
+    fetchListings(page + 1);
+  };
+
   return (
-    <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ThemedText>Listings Placeholder</ThemedText>
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
+        <ThemedText style={styles.headerTitle}>My Listings</ThemedText>
+      </View>
+
+      <View style={styles.searchContainer}>
+        <View style={[styles.searchBar, { backgroundColor: theme.backgroundElement }]}>
+          <Ionicons name="search" size={20} color={theme.textSecondary} />
+          <TextInput
+            style={[styles.searchInput, { color: theme.text }]}
+            placeholder="Search listings..."
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+            onSubmitEditing={() => Keyboard.dismiss()}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <Ionicons name="close-circle" size={20} color={theme.textSecondary} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      <View>
+        <FlatList
+          data={TABS}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContainer}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const isActive = activeTab === item.id;
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.tab,
+                  { backgroundColor: isActive ? theme.tintBlue : theme.backgroundElement }
+                ]}
+                onPress={() => setActiveTab(item.id)}
+              >
+                <ThemedText
+                  style={[
+                    styles.tabText,
+                    { color: isActive ? "#fff" : theme.textSecondary }
+                  ]}
+                >
+                  {item.label}
+                </ThemedText>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+
+      {isLoading ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={theme.tintBlue} />
+        </View>
+      ) : (
+        <FlatList
+          data={listings}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          renderItem={({ item }) => <AgentPropertyCard property={item} />}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="home-outline" size={48} color={theme.textSecondary} />
+              <ThemedText themeColor="textSecondary" style={styles.emptyText}>
+                No listings found.
+              </ThemedText>
+            </View>
+          }
+          ListFooterComponent={
+            isFetchingMore ? (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator size="small" color={theme.tintBlue} />
+              </View>
+            ) : null
+          }
+        />
+      )}
     </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.three,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  searchContainer: {
+    paddingHorizontal: Spacing.four,
+    paddingBottom: Spacing.three,
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.three,
+    height: 48,
+    borderRadius: 12,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: Spacing.two,
+    fontSize: 16,
+  },
+  tabsContainer: {
+    paddingHorizontal: Spacing.four,
+    paddingBottom: Spacing.three,
+    gap: Spacing.two,
+  },
+  tab: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  listContent: {
+    paddingHorizontal: Spacing.four,
+    paddingBottom: Spacing.six,
+    flexGrow: 1,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 60,
+  },
+  emptyText: {
+    marginTop: Spacing.two,
+    fontSize: 16,
+  },
+  footerLoader: {
+    paddingVertical: Spacing.four,
+    alignItems: "center",
+  },
+});
