@@ -53,7 +53,7 @@ export default function AccountSettingsScreen() {
 
         {/* Menu Items */}
         <View style={styles.menuContainer}>
-          <MenuItem icon="person-outline" label="Personal information" onPress={() => {}} />
+          <MenuItem icon="person-outline" label="Personal information" onPress={() => router.push('/(agent)/profile/personal-info')} />
           <MenuItem icon="enter-outline" label="Login & Security" onPress={() => {}} />
           <MenuItem icon="shield-checkmark-outline" label="Privacy" onPress={() => {}} />
           <MenuItem icon="notifications-outline" label="Notifications" onPress={() => {}} />
