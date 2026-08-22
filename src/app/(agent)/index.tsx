@@ -177,7 +177,7 @@ export default function AgentHomeScreen() {
         {/* Quick Actions */}
         <SectionHeader title="Quick Actions" />
         <View style={styles.quickActionsRow}>
-          <QuickAction title="Add Listing" icon="add-circle" color={Colors.light.tintBlue} onPress={() => {}} />
+          <QuickAction title="Add Listing" icon="add-circle" color={Colors.light.tintBlue} onPress={() => router.push("/(agent)/add-listing")} />
           <QuickAction title="Messages" icon="chatbubble-ellipses" color={Colors.light.tintBlue} onPress={() => router.push("/(agent)/messages")} />
           <QuickAction title="Calendar" icon="calendar" color={Colors.light.tintBlue} onPress={() => {}} />
           <QuickAction title="Analytics" icon="bar-chart" color={Colors.light.tintBlue} onPress={() => {}} />

@@ -4,17 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
-import { Property } from './property-card';
 import { useTheme } from '@/hooks/use-theme';
-
-export interface AgentProperty extends Property {
-  status: 'Active' | 'Under Offer' | 'Sold';
-  views: number;
-  inquiries: number;
-}
+import { Listing } from '@/services/agent.service';
 
 interface AgentPropertyCardProps {
-  property: AgentProperty;
+  property: Listing;
 }
 
 export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
@@ -22,12 +16,12 @@ export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
   
   return (
     <ThemedView type="backgroundElement" style={styles.container}>
-      <Image source={{ uri: property.image }} style={styles.image} />
+      <Image source={{ uri: property.cover_photo }} style={styles.image} />
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <ThemedText style={styles.title} numberOfLines={1}>{property.title}</ThemedText>
-          <View style={[styles.statusBadge, { backgroundColor: property.status === 'Active' ? '#7BC043' : '#f5a623' }]}>
-            <ThemedText style={styles.statusText}>{property.status}</ThemedText>
+          <View style={[styles.statusBadge, { backgroundColor: property.status.toLowerCase() === 'active' ? '#7BC043' : '#f5a623' }]}>
+            <ThemedText style={styles.statusText}>{property.status.toUpperCase()}</ThemedText>
           </View>
         </View>
         <ThemedText themeColor="textSecondary" style={styles.address} numberOfLines={1}>{property.address}</ThemedText>
@@ -35,13 +29,13 @@ export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Ionicons name="eye-outline" size={14} color={theme.textSecondary} />
-            <ThemedText themeColor="textSecondary" style={styles.statText}>{property.views}</ThemedText>
+            <ThemedText themeColor="textSecondary" style={styles.statText}>{property.views_count}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <Ionicons name="chatbubble-outline" size={14} color={theme.textSecondary} />
-            <ThemedText themeColor="textSecondary" style={styles.statText}>{property.inquiries}</ThemedText>
+            <ThemedText themeColor="textSecondary" style={styles.statText}>{property.inquiries_count}</ThemedText>
           </View>
-          <ThemedText style={[styles.price, { color: theme.tintBlue }]}>N {property.price}</ThemedText>
+          <ThemedText style={[styles.price, { color: theme.tintBlue }]}>N {property.price.split('.')[0]}</ThemedText>
         </View>
       </View>
     </ThemedView>

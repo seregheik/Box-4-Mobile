@@ -7,6 +7,40 @@ export interface Agent {
   profile_picture: string;
 }
 
+export interface ListingImage {
+  id: string;
+  image: string;
+  is_cover: boolean;
+  created_at: string;
+}
+
+export interface Listing {
+  id: string;
+  agent: string;
+  agent_name: string;
+  title: string;
+  category: string;
+  price: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  bedrooms: number;
+  bathrooms: number;
+  balconies: number;
+  total_rooms: number;
+  facilities: string[];
+  status: string;
+  is_published: boolean;
+  is_boosted: boolean;
+  is_featured: boolean;
+  views_count: number;
+  inquiries_count: number;
+  cover_photo: string;
+  images: ListingImage[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DashboardMetrics {
   active_listings: {
     count: number;
@@ -31,7 +65,7 @@ export interface AgentDashboardResponse {
   greeting: string;
   agent: Agent;
   metrics: DashboardMetrics;
-  active_listings: any[]; // Update this with specific listing type when available
+  active_listings: Listing[];
 }
 
 export const AgentService = {
