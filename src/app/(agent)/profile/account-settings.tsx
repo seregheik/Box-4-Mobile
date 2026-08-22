@@ -8,18 +8,19 @@ import { Colors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useAuth } from '@/context/auth-context';
+import { useAuthStore } from '@/store/auth.store';
 
 export default function AccountSettingsScreen() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { clearAuth } = useAuthStore();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      await logout();
-      // Router will handle redirect automatically if using a top-level auth gate
+      clearAuth();
+      // Explicitly redirect to login to bypass any caching or default route matching issues
+      router.replace('/(auth)/login');
     } catch (error) {
       console.error('Failed to log out:', error);
     }
