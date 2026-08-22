@@ -83,18 +83,18 @@ export default function ProfileScreen() {
           <ThemedText style={[styles.email, { color: theme.tintBlue }]}>{email}</ThemedText>
         </View>
 
-        {/* Personal Information Cards */}
+        {/* Personal Information List */}
         <View style={styles.infoSection}>
           <ThemedText style={styles.sectionTitle}>Information</ThemedText>
-          <View style={styles.cardsGrid}>
-            <InfoCard icon="call" label="Phone" value={profile?.phone_number || 'N/A'} />
-            <InfoCard icon="location" label="Location" value={location} />
-            <InfoCard icon="business" label="Agency" value={profile?.agency_name || 'Independent'} />
-            {profile?.license_number && <InfoCard icon="id-card" label="License" value={profile.license_number} />}
+          <ThemedView type="backgroundElement" style={styles.infoListBlock}>
+            <InfoRow icon="call" label="Phone" value={profile?.phone_number || 'N/A'} />
+            <InfoRow icon="location" label="Location" value={location} />
+            <InfoRow icon="business" label="Agency" value={profile?.agency_name || 'Independent'} />
+            {profile?.license_number && <InfoRow icon="id-card" label="License" value={profile.license_number} />}
             {profile?.rating !== null && profile?.rating !== undefined && (
-              <InfoCard icon="star" label="Rating" value={`${profile.rating} / 5.0`} color="#FFB300" />
+              <InfoRow icon="star" label="Rating" value={`${profile.rating} / 5.0`} color="#FFB300" isLast />
             )}
-          </View>
+          </ThemedView>
 
           {profile?.bio && (
             <ThemedView type="backgroundElement" style={styles.bioCard}>
@@ -124,18 +124,20 @@ export default function ProfileScreen() {
   );
 }
 
-function InfoCard({ icon, label, value, color }: { icon: keyof typeof Ionicons.glyphMap, label: string, value: string, color?: string }) {
+function InfoRow({ icon, label, value, color, isLast = false }: { icon: keyof typeof Ionicons.glyphMap, label: string, value: string, color?: string, isLast?: boolean }) {
   const theme = useTheme();
   const iconColor = color || theme.tintBlue;
   
   return (
-    <ThemedView type="backgroundElement" style={styles.infoCard}>
-      <View style={styles.cardHeader}>
-        <ThemedText style={styles.cardLabel} themeColor="textSecondary" numberOfLines={1}>{label}</ThemedText>
-        <Ionicons name={icon} size={16} color={iconColor} />
+    <View style={[styles.infoRowWrapper, !isLast && { borderBottomColor: theme.border || '#ccc', borderBottomWidth: StyleSheet.hairlineWidth }]}>
+      <View style={styles.infoRow}>
+        <View style={styles.infoRowLeft}>
+          <Ionicons name={icon} size={20} color={iconColor} style={styles.infoRowIcon} />
+          <ThemedText style={styles.infoRowLabel} themeColor="textSecondary">{label}</ThemedText>
+        </View>
+        <ThemedText style={styles.infoRowValue} numberOfLines={1}>{value}</ThemedText>
       </View>
-      <ThemedText style={styles.cardValue} numberOfLines={2}>{value}</ThemedText>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -227,34 +229,37 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.four,
     paddingHorizontal: Spacing.two,
   },
-  cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: Spacing.three,
+  infoListBlock: {
+    borderRadius: 20,
+    overflow: 'hidden',
     marginBottom: Spacing.four,
   },
-  infoCard: {
-    width: '48%',
-    padding: Spacing.four,
-    borderRadius: 20,
+  infoRowWrapper: {
+    paddingHorizontal: Spacing.four,
   },
-  cardHeader: {
+  infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.two,
+    paddingVertical: 16,
   },
-  cardLabel: {
-    fontSize: 12,
+  infoRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 100,
+  },
+  infoRowIcon: {
+    marginRight: 10,
+  },
+  infoRowLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  infoRowValue: {
+    fontSize: 15,
     fontWeight: '600',
     flex: 1,
-    paddingRight: 4,
-  },
-  cardValue: {
-    fontSize: 15,
-    fontWeight: '700',
-    lineHeight: 20,
+    textAlign: 'right',
   },
   bioCard: {
     padding: Spacing.four,
