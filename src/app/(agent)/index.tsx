@@ -100,17 +100,23 @@ export default function AgentHomeScreen() {
         </View>
 
         {/* My Active Listings Dropdown */}
-        <TouchableOpacity 
-          style={styles.dropdownHeader} 
-          onPress={() => setIsListingsExpanded(!isListingsExpanded)}
-        >
-          <ThemedText type="subtitle" style={styles.dropdownTitle}>My Active Listings</ThemedText>
-          <Ionicons 
-            name={isListingsExpanded ? "chevron-up" : "chevron-down"} 
-            size={24} 
-            color={theme.text} 
-          />
-        </TouchableOpacity>
+        <View style={styles.dropdownHeaderContainer}>
+          <TouchableOpacity 
+            style={styles.dropdownHeaderTouch} 
+            onPress={() => setIsListingsExpanded(!isListingsExpanded)}
+          >
+            <ThemedText style={styles.dropdownTitle}>My Active Listings</ThemedText>
+            <Ionicons 
+              name={isListingsExpanded ? "chevron-up" : "chevron-down"} 
+              size={20} 
+              color={theme.text} 
+            />
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={() => router.push("/(agent)/listings")}>
+            <ThemedText style={[styles.actionText, { color: theme.tintBlue }]}>View all</ThemedText>
+          </TouchableOpacity>
+        </View>
         
         {isListingsExpanded && (
           <View style={styles.listingsContainer}>
@@ -170,15 +176,25 @@ const styles = StyleSheet.create({
   messageTime: {
     fontSize: 10,
   },
-  dropdownHeader: {
+  dropdownHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: Spacing.four,
-    marginBottom: Spacing.three,
+    marginBottom: Spacing.two,
+  },
+  dropdownHeaderTouch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   dropdownTitle: {
-    // any specific title styling
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  actionText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   listingsContainer: {
     marginTop: Spacing.two,
