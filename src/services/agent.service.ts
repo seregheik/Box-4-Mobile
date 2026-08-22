@@ -119,5 +119,13 @@ export const AgentService = {
   getProfile: async (): Promise<AgentProfile> => {
     const response = await apiClient.get('/agents/profile/');
     return response.data;
+  },
+
+  /**
+   * Update the agent's profile
+   */
+  updateProfile: async (data: Partial<Omit<AgentProfile, 'id' | 'user' | 'profile_picture'> & { user?: { full_name?: string } }>): Promise<AgentProfile> => {
+    const response = await apiClient.patch('/agents/profile/', data);
+    return response.data;
   }
 };
