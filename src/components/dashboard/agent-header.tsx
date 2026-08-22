@@ -5,14 +5,20 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
-export function AgentHeader() {
+export interface AgentHeaderProps {
+  greeting?: string;
+  agentName?: string;
+  avatarUrl?: string;
+}
+
+export function AgentHeader({ greeting = "Hello,", agentName = "Agent!", avatarUrl = "https://i.pravatar.cc/150?img=47" }: AgentHeaderProps) {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
       <View style={styles.greetingSection}>
         <ThemedText style={styles.greetingText}>
-          Hello, <ThemedText style={styles.nameText}>Sarah!</ThemedText>
+          {greeting} <ThemedText style={styles.nameText}>{agentName}</ThemedText>
         </ThemedText>
         <ThemedText style={styles.subGreetingText}>
           Here's your overview today
@@ -27,7 +33,7 @@ export function AgentHeader() {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/profile")}>
           <Image
-            source={{ uri: "https://i.pravatar.cc/150?img=47" }}
+            source={{ uri: avatarUrl }}
             style={styles.avatar}
           />
         </TouchableOpacity>

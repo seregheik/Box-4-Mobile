@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { ScrollView, StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { ScrollView, StyleSheet, View, TouchableOpacity, Image, ActivityIndicator, RefreshControl } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Spacing, Colors } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 
 import { AgentHeader } from "@/components/dashboard/agent-header";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { QuickAction } from "@/components/dashboard/quick-action";
 import { AgentProperty, AgentPropertyCard } from "@/components/dashboard/agent-property-card";
-import { Colors } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
+import { AgentService, AgentDashboardResponse } from "@/services/agent.service";
 
 const MOCK_PROPERTIES: AgentProperty[] = [
   {
@@ -52,6 +52,53 @@ export default function AgentHomeScreen() {
   const router = useRouter();
   
   const [isListingsExpanded, setIsListingsExpanded] = useState(true);
+  const [dashboardData, setDashboardData] = useState<AgentDashboardResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchDashboard = async () => {
+    try {
+      const data = await AgentService.getDashboard();
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to load dashboard:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchDashboard();
+  }, []);
+
+  if (loading && !dashboardData) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color={theme.tintBlue} />
+      </ThemedView>
+    );
+  }
+
+  const agentName = dashboardData?.agent?.full_name || "Agent";
+  // The backend returns "Hey, Osasere Ikp!". We try to extract "Hey," to match the UI design.
+  let greetingText = "Hello,";
+  if (dashboardData?.greeting) {
+    const parts = dashboardData.greeting.split(agentName);
+    if (parts.length > 0 && parts[0].trim().length > 0) {
+      greetingText = parts[0].trim();
+    }
+  }
+
+  const activeListingsCount = dashboardData?.metrics?.active_listings?.count?.toString() || "0";
+  const viewsCount = dashboardData?.metrics?.views?.total_views?.toString() || "0";
+  const inquiriesCount = dashboardData?.metrics?.new_inquiries?.count?.toString() || "0";
+  const activeListings = dashboardData?.active_listings || [];
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -61,8 +108,13 @@ export default function AgentHomeScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 80 },
         ]}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <AgentHeader />
+        <AgentHeader 
+          greeting={greetingText}
+          agentName={agentName}
+          avatarUrl={dashboardData?.agent?.profile_picture}
+        />
 
         {/* Overview Stats */}
         <ScrollView
@@ -70,9 +122,9 @@ export default function AgentHomeScreen() {
           showsHorizontalScrollIndicator={false}
           style={[styles.horizontalList, { marginTop: Spacing.four }]}
         >
-          <StatCard title="Active Listings" value="12" icon="home" color={Colors.light.tintBlue} />
-          <StatCard title="Total Views" value="1.2k" icon="eye" color="#7BC043" />
-          <StatCard title="Leads" value="45" icon="people" color={Colors.light.tintRed} />
+          <StatCard title="Active Listings" value={activeListingsCount} icon="home" color={Colors.light.tintBlue} />
+          <StatCard title="Total Views" value={viewsCount} icon="eye" color="#7BC043" />
+          <StatCard title="Leads" value={inquiriesCount} icon="people" color={Colors.light.tintRed} />
         </ScrollView>
 
         {/* Quick Actions */}
@@ -120,9 +172,15 @@ export default function AgentHomeScreen() {
         
         {isListingsExpanded && (
           <View style={styles.listingsContainer}>
-            {MOCK_PROPERTIES.map((item) => (
-              <AgentPropertyCard key={item.id} property={item} />
-            ))}
+            {activeListings.length > 0 ? (
+              activeListings.map((item: any) => (
+                <AgentPropertyCard key={item.id} property={item} />
+              ))
+            ) : (
+              <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.four }}>
+                You have no active listings.
+              </ThemedText>
+            )}
           </View>
         )}
 
@@ -135,6 +193,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: -Spacing.three,
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollContent: {
     paddingHorizontal: Spacing.four,
