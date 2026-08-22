@@ -1,33 +1,56 @@
-import { useState, useEffect, useCallback } from "react";
-import { ScrollView, StyleSheet, View, TouchableOpacity, Image, ActivityIndicator, RefreshControl } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Skeleton } from "@/components/skeleton";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing, Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { Skeleton } from "@/components/skeleton";
 
 import { AgentHeader } from "@/components/dashboard/agent-header";
+import { AgentPropertyCard } from "@/components/dashboard/agent-property-card";
+import { QuickAction } from "@/components/dashboard/quick-action";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { QuickAction } from "@/components/dashboard/quick-action";
-import { AgentProperty, AgentPropertyCard } from "@/components/dashboard/agent-property-card";
-import { AgentService, AgentDashboardResponse } from "@/services/agent.service";
+import { AgentDashboardResponse, AgentService } from "@/services/agent.service";
 
 function DashboardSkeleton() {
   const insets = useSafeAreaInsets();
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top, paddingHorizontal: Spacing.four }]}>
+    <ThemedView
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingHorizontal: Spacing.four },
+      ]}
+    >
       {/* Header Skeleton */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: Spacing.two }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingVertical: Spacing.two,
+        }}
+      >
         <View>
-          <Skeleton width={120} height={20} borderRadius={10} style={{ marginBottom: 8 }} />
+          <Skeleton
+            width={120}
+            height={20}
+            borderRadius={10}
+            style={{ marginBottom: 8 }}
+          />
           <Skeleton width={160} height={16} borderRadius={8} />
         </View>
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+        <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
           <Skeleton width={40} height={40} borderRadius={20} />
           <Skeleton width={40} height={40} borderRadius={20} />
           <Skeleton width={40} height={40} borderRadius={20} />
@@ -35,9 +58,19 @@ function DashboardSkeleton() {
       </View>
 
       {/* Grid Skeleton */}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: Spacing.two }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          marginTop: Spacing.two,
+        }}
+      >
         {[1, 2, 3, 4].map((i) => (
-          <View key={i} style={{ width: '48%', height: 100, marginBottom: Spacing.three }}>
+          <View
+            key={i}
+            style={{ width: "48%", height: 100, marginBottom: Spacing.three }}
+          >
             <Skeleton width="100%" height="100%" borderRadius={20} />
           </View>
         ))}
@@ -45,23 +78,45 @@ function DashboardSkeleton() {
 
       {/* Quick Actions Skeleton */}
       <View style={{ marginTop: Spacing.four, marginBottom: Spacing.four }}>
-        <Skeleton width={120} height={20} borderRadius={10} style={{ marginBottom: Spacing.three }} />
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Skeleton
+          width={120}
+          height={20}
+          borderRadius={10}
+          style={{ marginBottom: Spacing.three }}
+        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           {[1, 2, 3, 4].map((i) => (
-            <View key={i} style={{ alignItems: 'center' }}>
-              <Skeleton width={50} height={50} borderRadius={25} style={{ marginBottom: 8 }} />
+            <View key={i} style={{ alignItems: "center" }}>
+              <Skeleton
+                width={50}
+                height={50}
+                borderRadius={25}
+                style={{ marginBottom: 8 }}
+              />
               <Skeleton width={60} height={12} borderRadius={6} />
             </View>
           ))}
         </View>
       </View>
-      
+
       {/* Recent Inquiries Skeleton */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: Spacing.six, marginBottom: Spacing.three }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: Spacing.six,
+          marginBottom: Spacing.three,
+        }}
+      >
         <Skeleton width={140} height={20} borderRadius={10} />
         <Skeleton width={60} height={16} borderRadius={8} />
       </View>
-      <Skeleton width="100%" height={70} borderRadius={16} style={{ marginBottom: Spacing.two }} />
+      <Skeleton
+        width="100%"
+        height={70}
+        borderRadius={16}
+        style={{ marginBottom: Spacing.two }}
+      />
       <Skeleton width="100%" height={70} borderRadius={16} />
     </ThemedView>
   );
@@ -71,9 +126,10 @@ export default function AgentHomeScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const router = useRouter();
-  
+
   const [isListingsExpanded, setIsListingsExpanded] = useState(true);
-  const [dashboardData, setDashboardData] = useState<AgentDashboardResponse | null>(null);
+  const [dashboardData, setDashboardData] =
+    useState<AgentDashboardResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -90,12 +146,15 @@ export default function AgentHomeScreen() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let mounted = true;
     const init = async () => {
       await fetchDashboard();
     };
     init();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [fetchDashboard]);
 
   const onRefresh = useCallback(() => {
@@ -117,9 +176,12 @@ export default function AgentHomeScreen() {
     }
   }
 
-  const activeListingsCount = dashboardData?.metrics?.active_listings?.count?.toString() || "0";
-  const viewsCount = dashboardData?.metrics?.views?.total_views?.toString() || "0";
-  const inquiriesCount = dashboardData?.metrics?.new_inquiries?.count?.toString() || "0";
+  const activeListingsCount =
+    dashboardData?.metrics?.active_listings?.count?.toString() || "0";
+  const viewsCount =
+    dashboardData?.metrics?.views?.total_views?.toString() || "0";
+  const inquiriesCount =
+    dashboardData?.metrics?.new_inquiries?.count?.toString() || "0";
   const activeListings = dashboardData?.active_listings || [];
 
   return (
@@ -130,9 +192,11 @@ export default function AgentHomeScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 80 },
         ]}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <AgentHeader 
+        <AgentHeader
           greeting={greetingText}
           agentName={agentName}
           avatarUrl={dashboardData?.agent?.profile_picture}
@@ -140,36 +204,41 @@ export default function AgentHomeScreen() {
 
         {/* Overview Stats */}
         <View style={styles.statsGrid}>
-          <StatCard 
-            title="Active Listings" 
-            value={activeListingsCount} 
-            icon="home" 
-            color={Colors.light.tintBlue} 
-            note={dashboardData?.metrics?.active_listings?.note} 
+          <StatCard
+            title="Active Listings"
+            value={activeListingsCount}
+            icon="home"
+            color={Colors.light.tintBlue}
+            note={dashboardData?.metrics?.active_listings?.note}
             style={styles.statCard}
           />
-          <StatCard 
-            title="Total Views" 
-            value={viewsCount} 
-            icon="eye" 
-            color="#7BC043" 
-            note={`Trend: ${dashboardData?.metrics?.views?.trend || "0"}`} 
+          <StatCard
+            title="Total Views"
+            value={viewsCount}
+            icon="eye"
+            color="#7BC043"
+            note={`Trend: ${dashboardData?.metrics?.views?.trend || "0"}`}
             style={styles.statCard}
           />
-          <StatCard 
-            title="Leads" 
-            value={inquiriesCount} 
-            icon="people" 
-            color={Colors.light.tintRed} 
-            note={dashboardData?.metrics?.new_inquiries?.note} 
+          <StatCard
+            title="Leads"
+            value={inquiriesCount}
+            icon="people"
+            color={Colors.light.tintRed}
+            note={dashboardData?.metrics?.new_inquiries?.note}
             style={styles.statCard}
           />
-          <StatCard 
+          <StatCard
             title={`Plan: ${dashboardData?.metrics?.subscription?.plan_name || "Free"}`}
-            value={dashboardData?.metrics?.subscription?.days_left?.toString() || "0"} 
-            icon="card" 
-            color="#9C27B0" 
-            note={dashboardData?.metrics?.subscription?.days_left_text || "0 Days left"} 
+            value={
+              dashboardData?.metrics?.subscription?.days_left?.toString() || "0"
+            }
+            icon="card"
+            color="#9C27B0"
+            note={
+              dashboardData?.metrics?.subscription?.days_left_text ||
+              "0 Days left"
+            }
             style={styles.statCard}
           />
         </View>
@@ -177,39 +246,74 @@ export default function AgentHomeScreen() {
         {/* Quick Actions */}
         <SectionHeader title="Quick Actions" />
         <View style={styles.quickActionsRow}>
-          <QuickAction title="Add Listing" icon="add-circle" color={Colors.light.tintBlue} onPress={() => router.push("/(agent)/add-listing")} />
-          <QuickAction title="Messages" icon="chatbubble-ellipses" color={Colors.light.tintBlue} onPress={() => router.push("/(agent)/messages")} />
-          <QuickAction title="Calendar" icon="calendar" color={Colors.light.tintBlue} onPress={() => {}} />
-          <QuickAction title="Analytics" icon="bar-chart" color={Colors.light.tintBlue} onPress={() => {}} />
+          <QuickAction
+            title="Add Listing"
+            icon="add-circle"
+            color={Colors.light.tintBlue}
+            onPress={() => router.push("/(agent)/add-listing")}
+          />
+          <QuickAction
+            title="Messages"
+            icon="chatbubble-ellipses"
+            color={Colors.light.tintBlue}
+            onPress={() => router.push("/(agent)/messages")}
+          />
+          <QuickAction
+            title="Calendar"
+            icon="calendar"
+            color={Colors.light.tintBlue}
+            onPress={() => {}}
+          />
+          <QuickAction
+            title="Analytics"
+            icon="bar-chart"
+            color={Colors.light.tintBlue}
+            onPress={() => {}}
+          />
         </View>
 
         {/* Recent Inquiries */}
-        <SectionHeader title="Recent Inquiries" actionText="View all" onAction={() => router.push("/(agent)/messages")} />
+        <SectionHeader
+          title="Recent Inquiries"
+          actionText="View all"
+          onAction={() => router.push("/(agent)/messages")}
+        />
         <View style={styles.inquiriesContainer}>
-          <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.two, marginBottom: Spacing.four }}>
+          <ThemedText
+            themeColor="textSecondary"
+            style={{
+              textAlign: "center",
+              marginTop: Spacing.two,
+              marginBottom: Spacing.four,
+            }}
+          >
             You have no recent inquiries.
           </ThemedText>
         </View>
 
         {/* My Active Listings Dropdown */}
         <View style={styles.dropdownHeaderContainer}>
-          <TouchableOpacity 
-            style={styles.dropdownHeaderTouch} 
+          <TouchableOpacity
+            style={styles.dropdownHeaderTouch}
             onPress={() => setIsListingsExpanded(!isListingsExpanded)}
           >
-            <ThemedText style={styles.dropdownTitle}>My Active Listings</ThemedText>
-            <Ionicons 
-              name={isListingsExpanded ? "chevron-up" : "chevron-down"} 
-              size={20} 
-              color={theme.text} 
+            <ThemedText style={styles.dropdownTitle}>
+              My Active Listings
+            </ThemedText>
+            <Ionicons
+              name={isListingsExpanded ? "chevron-up" : "chevron-down"}
+              size={20}
+              color={theme.text}
             />
           </TouchableOpacity>
-          
+
           <TouchableOpacity onPress={() => router.push("/(agent)/listings")}>
-            <ThemedText style={[styles.actionText, { color: theme.tintBlue }]}>View all</ThemedText>
+            <ThemedText style={[styles.actionText, { color: theme.tintBlue }]}>
+              View all
+            </ThemedText>
           </TouchableOpacity>
         </View>
-        
+
         {isListingsExpanded && (
           <View style={styles.listingsContainer}>
             {activeListings.length > 0 ? (
@@ -217,13 +321,15 @@ export default function AgentHomeScreen() {
                 <AgentPropertyCard key={item.id} property={item} />
               ))
             ) : (
-              <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.four }}>
+              <ThemedText
+                themeColor="textSecondary"
+                style={{ textAlign: "center", marginTop: Spacing.four }}
+              >
                 You have no active listings.
               </ThemedText>
             )}
           </View>
         )}
-
       </ScrollView>
     </ThemedView>
   );
@@ -286,26 +392,26 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   dropdownHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: Spacing.four,
     marginBottom: Spacing.two,
   },
   dropdownHeaderTouch: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   dropdownTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   actionText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   listingsContainer: {
     marginTop: Spacing.two,
-  }
+  },
 });

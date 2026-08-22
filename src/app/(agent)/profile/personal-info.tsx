@@ -109,7 +109,7 @@ export default function PersonalInfoScreen() {
             <Ionicons name="chevron-back" size={24} color={theme.text} />
           </TouchableOpacity>
           <ThemedText style={styles.headerTitle}>Edit Profile</ThemedText>
-          <View style={{ width: 44 }} /> {/* Placeholder for balance */}
+          <View style={{ width: 44 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>

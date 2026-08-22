@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { 
-  StyleSheet, 
-  View, 
-  FlatList, 
-  TextInput, 
-  TouchableOpacity, 
-  ActivityIndicator,
-  RefreshControl,
-  Keyboard
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Keyboard,
+  RefreshControl,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AgentPropertyCard } from "@/components/dashboard/agent-property-card";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing, Colors } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { AgentPropertyCard } from "@/components/dashboard/agent-property-card";
 import { AgentService, Listing } from "@/services/agent.service";
 
 const TABS = [
@@ -36,7 +37,7 @@ export default function ListingsScreen() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
@@ -84,7 +85,14 @@ export default function ListingsScreen() {
 
   // React to filter/search changes
   useEffect(() => {
-    fetchListings(1);
+    let mounted = true;
+    const init = async () => {
+      await fetchListings(1);
+    };
+    init();
+    return () => {
+      mounted = false;
+    };
   }, [activeTab, debouncedSearchQuery]);
 
   const onRefresh = useCallback(() => {
@@ -102,8 +110,8 @@ export default function ListingsScreen() {
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <ThemedText style={styles.headerTitle}>My Listings</ThemedText>
-        <TouchableOpacity 
-          style={[styles.addButton, { backgroundColor: theme.tintBlue }]} 
+        <TouchableOpacity
+          style={[styles.addButton, { backgroundColor: theme.tintBlue }]}
           onPress={() => router.push("/(agent)/add-listing")}
         >
           <Ionicons name="add" size={20} color="#fff" />
@@ -112,7 +120,12 @@ export default function ListingsScreen() {
       </View>
 
       <View style={styles.searchContainer}>
-        <View style={[styles.searchBar, { backgroundColor: theme.backgroundElement }]}>
+        <View
+          style={[
+            styles.searchBar,
+            { backgroundColor: theme.backgroundElement },
+          ]}
+        >
           <Ionicons name="search" size={20} color={theme.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: theme.text }]}
@@ -125,7 +138,11 @@ export default function ListingsScreen() {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Ionicons name="close-circle" size={20} color={theme.textSecondary} />
+              <Ionicons
+                name="close-circle"
+                size={20}
+                color={theme.textSecondary}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -144,14 +161,18 @@ export default function ListingsScreen() {
               <TouchableOpacity
                 style={[
                   styles.tab,
-                  { backgroundColor: isActive ? theme.tintBlue : theme.backgroundElement }
+                  {
+                    backgroundColor: isActive
+                      ? theme.tintBlue
+                      : theme.backgroundElement,
+                  },
                 ]}
                 onPress={() => setActiveTab(item.id)}
               >
                 <ThemedText
                   style={[
                     styles.tabText,
-                    { color: isActive ? "#fff" : theme.textSecondary }
+                    { color: isActive ? "#fff" : theme.textSecondary },
                   ]}
                 >
                   {item.label}
@@ -171,13 +192,19 @@ export default function ListingsScreen() {
           data={listings}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
           renderItem={({ item }) => <AgentPropertyCard property={item} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="home-outline" size={48} color={theme.textSecondary} />
+              <Ionicons
+                name="home-outline"
+                size={48}
+                color={theme.textSecondary}
+              />
               <ThemedText themeColor="textSecondary" style={styles.emptyText}>
                 No listings found.
               </ThemedText>
