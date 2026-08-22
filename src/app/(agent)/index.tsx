@@ -93,17 +93,14 @@ export default function AgentHomeScreen() {
         />
 
         {/* Overview Stats */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={[styles.horizontalList, { marginTop: Spacing.four }]}
-        >
+        <View style={styles.statsGrid}>
           <StatCard 
             title="Active Listings" 
             value={activeListingsCount} 
             icon="home" 
             color={Colors.light.tintBlue} 
             note={dashboardData?.metrics?.active_listings?.note} 
+            style={styles.statCard}
           />
           <StatCard 
             title="Total Views" 
@@ -111,6 +108,7 @@ export default function AgentHomeScreen() {
             icon="eye" 
             color="#7BC043" 
             note={`Trend: ${dashboardData?.metrics?.views?.trend || "0"}`} 
+            style={styles.statCard}
           />
           <StatCard 
             title="Leads" 
@@ -118,6 +116,7 @@ export default function AgentHomeScreen() {
             icon="people" 
             color={Colors.light.tintRed} 
             note={dashboardData?.metrics?.new_inquiries?.note} 
+            style={styles.statCard}
           />
           <StatCard 
             title={`Plan: ${dashboardData?.metrics?.subscription?.plan_name || "Free"}`}
@@ -125,8 +124,9 @@ export default function AgentHomeScreen() {
             icon="card" 
             color="#9C27B0" 
             note={dashboardData?.metrics?.subscription?.days_left_text || "0 Days left"} 
+            style={styles.statCard}
           />
-        </ScrollView>
+        </View>
 
         {/* Quick Actions */}
         <SectionHeader title="Quick Actions" />
@@ -195,8 +195,15 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.four,
   },
-  horizontalList: {
-    // paddingRight: Spacing.four,
+  statsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: Spacing.four,
+  },
+  statCard: {
+    width: "48%",
+    marginBottom: Spacing.three,
   },
   quickActionsRow: {
     flexDirection: "row",

@@ -1,6 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
@@ -10,6 +9,7 @@ interface StatCardProps {
   icon: keyof typeof Ionicons.glyphMap;
   color?: string;
   note?: string;
+  style?: any;
 }
 
 export function StatCard({
@@ -18,9 +18,10 @@ export function StatCard({
   icon,
   color = "#0495CC",
   note,
+  style,
 }: StatCardProps) {
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
+    <ThemedView type="backgroundElement" style={[styles.card, style]}>
       <View style={styles.textContainer}>
         <ThemedText style={styles.value}>{value}</ThemedText>
         <ThemedText
@@ -46,19 +47,17 @@ export function StatCard({
 
 const styles = StyleSheet.create({
   card: {
-    padding: 16,
-    paddingVertical: 20,
-    borderRadius: 20,
-    minWidth: 170,
-    marginRight: Spacing.three,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 2,
     position: "relative",
   },
   iconContainer: {
     position: "absolute",
-    top: 16,
-    right: 16,
-    width: 32,
-    height: 32,
+    top: 12,
+    right: 12,
+    width: 28,
+    height: 28,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
@@ -67,18 +66,18 @@ const styles = StyleSheet.create({
     paddingRight: 32,
   },
   value: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "800",
     marginBottom: 4,
     lineHeight: 28,
   },
   title: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: "700",
+    marginBottom: 2,
   },
   noteText: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#888",
     fontWeight: "500",
   },
