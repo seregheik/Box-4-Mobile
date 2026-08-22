@@ -16,35 +16,6 @@ import { QuickAction } from "@/components/dashboard/quick-action";
 import { AgentProperty, AgentPropertyCard } from "@/components/dashboard/agent-property-card";
 import { AgentService, AgentDashboardResponse } from "@/services/agent.service";
 
-const MOCK_PROPERTIES: AgentProperty[] = [
-  {
-    id: "1",
-    title: "4Bedroom apartment",
-    address: "No 2 Ikorodu street, lagos",
-    location: "Ikorodu, Lagos",
-    price: "10,00000",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400",
-    status: "Active",
-    views: 1200,
-    inquiries: 15,
-  },
-  {
-    id: "2",
-    title: "3Bedroom bungalow",
-    address: "45 Adeola Odeku, Victoria Island",
-    location: "Victoria Island, Lagos",
-    price: "8,50000",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400",
-    status: "Under Offer",
-    views: 840,
-    inquiries: 8,
-  },
-];
-
-const RECENT_MESSAGES = [
-  { id: "1", name: "King Jeoffery", message: "When do you want to inspect...", time: "10:45 AM", avatar: "https://i.pravatar.cc/150?img=33" },
-  { id: "2", name: "Samuel Ella", message: "Is the property still available?", time: "Yesterday", avatar: "https://i.pravatar.cc/150?img=12" },
-];
 
 export default function AgentHomeScreen() {
   const insets = useSafeAreaInsets();
@@ -56,7 +27,7 @@ export default function AgentHomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       const data = await AgentService.getDashboard();
       setDashboardData(data);
@@ -66,16 +37,21 @@ export default function AgentHomeScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchDashboard();
-  }, []);
+    let mounted = true;
+    const init = async () => {
+      await fetchDashboard();
+    };
+    init();
+    return () => { mounted = false; };
+  }, [fetchDashboard]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
 
   if (loading && !dashboardData) {
     return (
@@ -164,16 +140,9 @@ export default function AgentHomeScreen() {
         {/* Recent Inquiries */}
         <SectionHeader title="Recent Inquiries" actionText="View all" onAction={() => router.push("/(agent)/messages")} />
         <View style={styles.inquiriesContainer}>
-          {RECENT_MESSAGES.map((msg) => (
-            <TouchableOpacity key={msg.id} style={[styles.messageCard, { backgroundColor: theme.backgroundElement }]} onPress={() => router.push("/(agent)/messages")}>
-              <Image source={{ uri: msg.avatar }} style={styles.messageAvatar} />
-              <View style={styles.messageDetails}>
-                <ThemedText style={styles.messageName}>{msg.name}</ThemedText>
-                <ThemedText themeColor="textSecondary" style={styles.messagePreview} numberOfLines={1}>{msg.message}</ThemedText>
-              </View>
-              <ThemedText themeColor="textSecondary" style={styles.messageTime}>{msg.time}</ThemedText>
-            </TouchableOpacity>
-          ))}
+          <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.two, marginBottom: Spacing.four }}>
+            You have no recent inquiries.
+          </ThemedText>
         </View>
 
         {/* My Active Listings Dropdown */}
