@@ -19,47 +19,27 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { AgentService } from '@/services/agent.service';
+import { useProfileStore } from '@/store/profile.store';
 
 export default function PersonalInfoScreen() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const { profile, updateProfileData } = useProfileStore();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Form State
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
-  const [agency, setAgency] = useState('');
-  const [license, setLicense] = useState('');
-  const [bio, setBio] = useState('');
-
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
-    try {
-      const data = await AgentService.getProfile();
-      setFullName(data.user?.full_name || '');
-      setPhone(data.phone_number || '');
-      setCity(data.city || '');
-      setState(data.state || '');
-      setCountry(data.country || '');
-      setAgency(data.agency_name || '');
-      setLicense(data.license_number || '');
-      setBio(data.bio || '');
-    } catch (error) {
-      console.error("Failed to load profile for editing:", error);
-      Alert.alert("Error", "Could not load profile data.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [fullName, setFullName] = useState(profile?.user?.full_name || '');
+  const [phone, setPhone] = useState(profile?.phone_number || '');
+  const [city, setCity] = useState(profile?.city || '');
+  const [state, setState] = useState(profile?.state || '');
+  const [country, setCountry] = useState(profile?.country || '');
+  const [agency, setAgency] = useState(profile?.agency_name || '');
+  const [license, setLicense] = useState(profile?.license_number || '');
+  const [bio, setBio] = useState(profile?.bio || '');
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -75,7 +55,9 @@ export default function PersonalInfoScreen() {
         bio
       };
 
-      await AgentService.updateProfile(payload);
+      const updatedProfile = await AgentService.updateProfile(payload);
+      updateProfileData(updatedProfile);
+      
       Alert.alert("Success", "Your profile has been updated.", [
         { text: "OK", onPress: () => router.back() }
       ]);

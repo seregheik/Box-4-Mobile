@@ -7,15 +7,16 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AgentService, AgentProfile } from '@/services/agent.service';
+import { AgentService } from '@/services/agent.service';
+import { useProfileStore } from '@/store/profile.store';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
-  const [profile, setProfile] = useState<AgentProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, setProfile } = useProfileStore();
+  const [loading, setLoading] = useState(!profile);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchProfile = useCallback(async () => {
@@ -28,7 +29,7 @@ export default function ProfileScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [setProfile]);
 
   useEffect(() => {
     fetchProfile();

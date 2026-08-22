@@ -9,12 +9,14 @@ import { useTheme } from '@/hooks/use-theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/store/auth.store';
+import { useProfileStore } from '@/store/profile.store';
 
 export default function AccountSettingsScreen() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { clearAuth } = useAuthStore();
+  const { profile } = useProfileStore();
 
   const handleLogout = () => {
     try {
@@ -41,12 +43,16 @@ export default function AccountSettingsScreen() {
 
           <View style={[styles.headerPill, { backgroundColor: theme.backgroundElement }]}>
             <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop' }} 
+              source={{ uri: profile?.profile_picture || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop' }} 
               style={styles.headerAvatar} 
             />
             <View>
-              <ThemedText style={styles.headerName}>Clinton</ThemedText>
-              <ThemedText style={styles.headerEmail} themeColor="textSecondary">Clintontamaremi@gmail.com</ThemedText>
+              <ThemedText style={styles.headerName}>
+                {profile?.user?.full_name || 'Agent'}
+              </ThemedText>
+              <ThemedText style={styles.headerEmail} themeColor="textSecondary">
+                {profile?.user?.email || 'No email provided'}
+              </ThemedText>
             </View>
           </View>
         </View>
