@@ -75,6 +75,27 @@ export interface PaginatedListingsResponse {
   results: Listing[];
 }
 
+export interface AgentProfile {
+  id: string;
+  user: {
+    id: string;
+    email: string;
+    full_name: string;
+    role: string;
+  };
+  phone_number: string | null;
+  profile_picture: string | null;
+  latitude: string | null;
+  longitude: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  bio: string | null;
+  agency_name: string | null;
+  license_number: string | null;
+  rating: number | null;
+}
+
 export const AgentService = {
   /**
    * Fetch the agent dashboard data for the home screen
@@ -91,4 +112,12 @@ export const AgentService = {
     const response = await apiClient.get('/agents/properties/my-listings/', { params });
     return response.data;
   },
+
+  /**
+   * Fetch the agent's full profile
+   */
+  getProfile: async (): Promise<AgentProfile> => {
+    const response = await apiClient.get('/agents/profile/');
+    return response.data;
+  }
 };
