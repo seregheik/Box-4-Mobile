@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -29,6 +30,7 @@ const TABS = [
 export default function ListingsScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const router = useRouter();
 
   // State
   const [listings, setListings] = useState<Listing[]>([]);
@@ -100,6 +102,13 @@ export default function ListingsScreen() {
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <ThemedText style={styles.headerTitle}>My Listings</ThemedText>
+        <TouchableOpacity 
+          style={[styles.addButton, { backgroundColor: theme.tintBlue }]} 
+          onPress={() => router.push("/(agent)/add-listing")}
+        >
+          <Ionicons name="add" size={20} color="#fff" />
+          <ThemedText style={styles.addButtonText}>Add</ThemedText>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.searchContainer}>
@@ -192,11 +201,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.three,
   },
   headerTitle: {
     fontSize: 24,
+    fontWeight: "bold",
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 14,
     fontWeight: "bold",
   },
   searchContainer: {
