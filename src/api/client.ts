@@ -1,5 +1,5 @@
 import { create } from "axios";
-import * as SecureStore from "expo-secure-store";
+import { useAuthStore } from "@/store/auth.store";
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL || "https://box4realestate.cloud/api/v1";
@@ -14,14 +14,14 @@ export const apiClient = create({
 
 // Request Interceptor: Attach the token to every request if it exists
 apiClient.interceptors.request.use(
-  async (config) => {
+  (config) => {
     try {
-      const token = await SecureStore.getItemAsync("userToken");
+      const token = useAuthStore.getState().access;
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error("Error fetching token from SecureStore:", error);
+      console.error("Error fetching token from AuthStore:", error);
     }
     return config;
   },
@@ -35,13 +35,13 @@ apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error) => {
+  (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized errors globally (e.g., clear token, logout user)
       console.log(
-        "Unauthorized! Consider clearing local storage and redirecting to login.",
+        "Unauthorized! Clearing auth store and redirecting to login.",
       );
-      await SecureStore.deleteItemAsync("userToken");
+      useAuthStore.getState().clearAuth();
     }
     return Promise.reject(error);
   },
