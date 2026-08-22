@@ -122,9 +122,34 @@ export default function AgentHomeScreen() {
           showsHorizontalScrollIndicator={false}
           style={[styles.horizontalList, { marginTop: Spacing.four }]}
         >
-          <StatCard title="Active Listings" value={activeListingsCount} icon="home" color={Colors.light.tintBlue} />
-          <StatCard title="Total Views" value={viewsCount} icon="eye" color="#7BC043" />
-          <StatCard title="Leads" value={inquiriesCount} icon="people" color={Colors.light.tintRed} />
+          <StatCard 
+            title="Active Listings" 
+            value={activeListingsCount} 
+            icon="home" 
+            color={Colors.light.tintBlue} 
+            note={dashboardData?.metrics?.active_listings?.note} 
+          />
+          <StatCard 
+            title="Total Views" 
+            value={viewsCount} 
+            icon="eye" 
+            color="#7BC043" 
+            note={`Trend: ${dashboardData?.metrics?.views?.trend || "0"}`} 
+          />
+          <StatCard 
+            title="Leads" 
+            value={inquiriesCount} 
+            icon="people" 
+            color={Colors.light.tintRed} 
+            note={dashboardData?.metrics?.new_inquiries?.note} 
+          />
+          <StatCard 
+            title={`Plan: ${dashboardData?.metrics?.subscription?.plan_name || "Free"}`}
+            value={dashboardData?.metrics?.subscription?.days_left?.toString() || "0"} 
+            icon="card" 
+            color="#9C27B0" 
+            note={dashboardData?.metrics?.subscription?.days_left_text || "0 Days left"} 
+          />
         </ScrollView>
 
         {/* Quick Actions */}

@@ -9,9 +9,10 @@ interface StatCardProps {
   value: string;
   icon: keyof typeof Ionicons.glyphMap;
   color?: string;
+  note?: string;
 }
 
-export function StatCard({ title, value, icon, color = "#0495CC" }: StatCardProps) {
+export function StatCard({ title, value, icon, color = "#0495CC", note }: StatCardProps) {
   return (
     <ThemedView type="backgroundElement" style={styles.card}>
       <View style={[styles.iconContainer, { backgroundColor: `${color}20` }]}>
@@ -22,6 +23,11 @@ export function StatCard({ title, value, icon, color = "#0495CC" }: StatCardProp
         <ThemedText type="default" themeColor="textSecondary" style={styles.title} numberOfLines={1}>
           {title}
         </ThemedText>
+        {note ? (
+          <ThemedText style={styles.noteText} numberOfLines={1}>
+            {note}
+          </ThemedText>
+        ) : null}
       </View>
     </ThemedView>
   );
@@ -54,5 +60,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 13,
     marginTop: 2,
+  },
+  noteText: {
+    fontSize: 11,
+    marginTop: 4,
+    color: "#888",
+    fontWeight: "500",
   },
 });
