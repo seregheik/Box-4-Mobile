@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing, Colors } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { Skeleton } from "@/components/skeleton";
 
 import { AgentHeader } from "@/components/dashboard/agent-header";
 import { SectionHeader } from "@/components/dashboard/section-header";
@@ -16,6 +17,55 @@ import { QuickAction } from "@/components/dashboard/quick-action";
 import { AgentProperty, AgentPropertyCard } from "@/components/dashboard/agent-property-card";
 import { AgentService, AgentDashboardResponse } from "@/services/agent.service";
 
+function DashboardSkeleton() {
+  const insets = useSafeAreaInsets();
+  return (
+    <ThemedView style={[styles.container, { paddingTop: insets.top, paddingHorizontal: Spacing.four }]}>
+      {/* Header Skeleton */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: Spacing.two }}>
+        <View>
+          <Skeleton width={120} height={20} borderRadius={10} style={{ marginBottom: 8 }} />
+          <Skeleton width={160} height={16} borderRadius={8} />
+        </View>
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+          <Skeleton width={40} height={40} borderRadius={20} />
+          <Skeleton width={40} height={40} borderRadius={20} />
+          <Skeleton width={40} height={40} borderRadius={20} />
+        </View>
+      </View>
+
+      {/* Grid Skeleton */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: Spacing.two }}>
+        {[1, 2, 3, 4].map((i) => (
+          <View key={i} style={{ width: '48%', height: 100, marginBottom: Spacing.three }}>
+            <Skeleton width="100%" height="100%" borderRadius={20} />
+          </View>
+        ))}
+      </View>
+
+      {/* Quick Actions Skeleton */}
+      <View style={{ marginTop: Spacing.four, marginBottom: Spacing.four }}>
+        <Skeleton width={120} height={20} borderRadius={10} style={{ marginBottom: Spacing.three }} />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={{ alignItems: 'center' }}>
+              <Skeleton width={50} height={50} borderRadius={25} style={{ marginBottom: 8 }} />
+              <Skeleton width={60} height={12} borderRadius={6} />
+            </View>
+          ))}
+        </View>
+      </View>
+      
+      {/* Recent Inquiries Skeleton */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: Spacing.six, marginBottom: Spacing.three }}>
+        <Skeleton width={140} height={20} borderRadius={10} />
+        <Skeleton width={60} height={16} borderRadius={8} />
+      </View>
+      <Skeleton width="100%" height={70} borderRadius={16} style={{ marginBottom: Spacing.two }} />
+      <Skeleton width="100%" height={70} borderRadius={16} />
+    </ThemedView>
+  );
+}
 
 export default function AgentHomeScreen() {
   const insets = useSafeAreaInsets();
@@ -54,11 +104,7 @@ export default function AgentHomeScreen() {
   }, [fetchDashboard]);
 
   if (loading && !dashboardData) {
-    return (
-      <ThemedView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color={theme.tintBlue} />
-      </ThemedView>
-    );
+    return <DashboardSkeleton />;
   }
 
   const agentName = dashboardData?.agent?.full_name || "Agent";
