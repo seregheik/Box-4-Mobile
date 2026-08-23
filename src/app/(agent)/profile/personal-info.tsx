@@ -46,6 +46,7 @@ export default function PersonalInfoScreen() {
     try {
       const payload = {
         user: { full_name: fullName },
+        full_name: fullName,
         phone_number: phone,
         city,
         state,
