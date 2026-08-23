@@ -1,5 +1,13 @@
 import { apiClient } from '@/api/client';
 
+export interface Category {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Agent {
   id: string;
   full_name: string;
@@ -126,6 +134,26 @@ export const AgentService = {
    */
   updateProfile: async (data: Partial<Omit<AgentProfile, 'id' | 'user' | 'profile_picture'> & { user?: { full_name?: string } }>): Promise<AgentProfile> => {
     const response = await apiClient.patch('/agents/profile/', data);
+    return response.data;
+  },
+
+  /**
+   * Fetch listing categories
+   */
+  getCategories: async (): Promise<Category[]> => {
+    const response = await apiClient.get('/agents/categories/');
+    return response.data;
+  },
+
+  /**
+   * Create a new property listing
+   */
+  createListing: async (data: FormData): Promise<Listing> => {
+    const response = await apiClient.post('/agents/properties/', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   }
 };
