@@ -52,7 +52,14 @@ export function Step3Photos() {
       // Append text fields
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== undefined && value !== "") {
-          data.append(key, String(value));
+          if (Array.isArray(value)) {
+            // Append each item in the array separately for multipart/form-data
+            value.forEach(item => {
+              data.append(key, String(item));
+            });
+          } else {
+            data.append(key, String(value));
+          }
         }
       });
 
