@@ -5,14 +5,29 @@ import { useAddListingStore } from '@/store/add-listing.store';
 import { AgentService, Category } from '@/services/agent.service';
 import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export function Step1BasicInfo() {
   const { formData, updateFormData, nextStep } = useAddListingStore();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
+  const [facilityInput, setFacilityInput] = useState('');
   const colorScheme = useColorScheme() ?? 'light';
   const theme = Colors[colorScheme];
+
+  const addFacility = () => {
+    if (facilityInput.trim()) {
+      updateFormData({ facilities: [...formData.facilities, facilityInput.trim()] });
+      setFacilityInput('');
+    }
+  };
+
+  const removeFacility = (index: number) => {
+    const newFacilities = [...formData.facilities];
+    newFacilities.splice(index, 1);
+    updateFormData({ facilities: newFacilities });
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -124,6 +139,36 @@ export function Step1BasicInfo() {
         </View>
       </View>
 
+      <View style={styles.inputGroup}>
+        <ThemedText style={styles.label}>Facilities</ThemedText>
+        <View style={styles.facilityInputContainer}>
+          <TextInput
+            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected, flex: 1, marginRight: Spacing.two }]}
+            placeholder="e.g. Parking lot, Garden"
+            placeholderTextColor={theme.textSecondary}
+            value={facilityInput}
+            onChangeText={setFacilityInput}
+            onSubmitEditing={addFacility}
+          />
+          <TouchableOpacity 
+            style={[styles.addButton, { backgroundColor: theme.tintBlue }]} 
+            onPress={addFacility}
+          >
+            <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Add</ThemedText>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.facilitiesContainer}>
+          {formData.facilities.map((facility, index) => (
+            <View key={index} style={[styles.facilityChip, { backgroundColor: theme.backgroundSelected }]}>
+              <ThemedText style={styles.facilityText}>{facility}</ThemedText>
+              <TouchableOpacity onPress={() => removeFacility(index)} style={styles.facilityRemove}>
+                <Ionicons name="close-circle" size={16} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </View>
+
       <TouchableOpacity 
         style={[styles.button, { backgroundColor: theme.tintBlue }]} 
         onPress={nextStep}
@@ -189,6 +234,38 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+  },
+  facilityInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  addButton: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three + 2, // to match input height roughly
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  facilitiesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: Spacing.two,
+  },
+  facilityChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
+    borderRadius: 16,
+    marginRight: Spacing.two,
+    marginBottom: Spacing.two,
+  },
+  facilityText: {
+    marginRight: Spacing.one,
+    fontSize: 14,
+  },
+  facilityRemove: {
+    marginLeft: 2,
   },
   button: {
     padding: Spacing.four,
