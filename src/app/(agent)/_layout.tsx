@@ -81,6 +81,18 @@ export default function AgentLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="add-listing"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="listing/[id]"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
