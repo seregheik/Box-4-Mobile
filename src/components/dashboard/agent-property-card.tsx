@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -13,9 +14,11 @@ interface AgentPropertyCardProps {
 
 export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
   const theme = useTheme();
+  const router = useRouter();
   
   return (
-    <ThemedView type="backgroundElement" style={styles.container}>
+    <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(`/(agent)/listing/${property.id}`)}>
+      <ThemedView type="backgroundElement" style={styles.container}>
       <Image source={{ uri: property.cover_photo }} style={styles.image} />
       <View style={styles.content}>
         <View style={styles.headerRow}>
@@ -37,8 +40,9 @@ export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
           </View>
           <ThemedText style={[styles.price, { color: theme.tintBlue }]}>N {property.price.split('.')[0]}</ThemedText>
         </View>
-      </View>
-    </ThemedView>
+        </View>
+      </ThemedView>
+    </TouchableOpacity>
   );
 }
 

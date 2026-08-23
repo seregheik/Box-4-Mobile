@@ -155,5 +155,13 @@ export const AgentService = {
       },
     });
     return response.data;
+  },
+
+  /**
+   * Fetch a specific property listing by ID
+   */
+  getListing: async (id: string): Promise<Listing> => {
+    const response = await apiClient.get(`/agents/properties/${id}/`);
+    return response.data;
   }
 };
