@@ -12,8 +12,8 @@ export default function AgentLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#ffffff',
-        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
+        tabBarActiveTintColor: "#ffffff",
+        tabBarInactiveTintColor: "rgba(255, 255, 255, 0.6)",
         tabBarButton: ({ ref, ...props }) => (
           <Pressable
             {...props}
@@ -79,13 +79,6 @@ export default function AgentLayout() {
               color={color}
             />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="add-listing"
-        options={{
-          href: null,
-          title: "Add Listing",
         }}
       />
     </Tabs>

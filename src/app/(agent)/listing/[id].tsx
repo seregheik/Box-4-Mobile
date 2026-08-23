@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BackButton } from '@/components/back-button';
+import { Skeleton } from '@/components/skeleton';
 import { Colors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { AgentService, Listing } from '@/services/agent.service';
@@ -23,6 +24,8 @@ export default function ListingDetailsScreen() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
+        setLoading(true);
+        setListing(null);
         const data = await AgentService.getListing(id);
         setListing(data);
       } catch (error) {
@@ -36,8 +39,47 @@ export default function ListingDetailsScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={theme.tintBlue} />
+      <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <BackButton />
+          <ThemedText style={styles.headerTitle}>Listing Details</ThemedText>
+          <View style={{ width: 40 }} />
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Skeleton height={250} borderRadius={0} />
+          <View style={styles.content}>
+            <View style={styles.titleRow}>
+              <Skeleton height={32} width="60%" />
+              <Skeleton height={24} width={60} borderRadius={8} />
+            </View>
+            <Skeleton height={28} width="40%" style={{ marginBottom: Spacing.one }} />
+            <Skeleton height={20} width="30%" style={{ marginBottom: Spacing.four }} />
+            
+            <View style={styles.section}>
+              <Skeleton height={24} width={100} style={{ marginBottom: Spacing.three }} />
+              <Skeleton height={20} width="80%" style={{ marginBottom: Spacing.two }} />
+              <Skeleton height={20} width="70%" />
+            </View>
+            
+            <View style={styles.section}>
+              <Skeleton height={24} width={100} style={{ marginBottom: Spacing.three }} />
+              <View style={styles.statsGrid}>
+                {[1, 2, 3, 4].map(i => (
+                  <Skeleton key={i} height={80} style={{ flex: 1, minWidth: '20%' }} borderRadius={12} />
+                ))}
+              </View>
+            </View>
+            
+            <View style={styles.section}>
+              <Skeleton height={24} width={100} style={{ marginBottom: Spacing.three }} />
+              <View style={styles.engagementRow}>
+                {[1, 2].map(i => (
+                  <Skeleton key={i} height={100} style={{ flex: 1 }} borderRadius={12} />
+                ))}
+              </View>
+            </View>
+          </View>
+        </ScrollView>
       </ThemedView>
     );
   }
