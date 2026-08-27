@@ -137,6 +137,7 @@ export default function LoginFormScreen() {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
             </View>
 
