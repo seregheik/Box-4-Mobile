@@ -30,7 +30,8 @@ export default function AddListingScreen() {
       <View style={styles.header}>
         <BackButton />
         <ThemedText style={styles.title}>Add Listing</ThemedText>
-        <View style={{ width: 40 }} /> {/* Placeholder to center title */}
+        {/* Placeholder to center title */}
+        <View style={{ width: 40 }} />
       </View>
       
       <View style={styles.progressContainer}>
