@@ -46,9 +46,6 @@ apiClient.interceptors.response.use(
       useAuthStore.getState().clearAuth();
       useProfileStore.getState().setProfile(null);
       
-      if (router.canGoBack()) {
-        router.dismissAll();
-      }
       router.replace("/(auth)/login");
     }
     return Promise.reject(error);
