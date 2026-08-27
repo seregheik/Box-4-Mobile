@@ -1,5 +1,7 @@
 import { create } from "axios";
 import { useAuthStore } from "@/store/auth.store";
+import { useProfileStore } from "@/store/profile.store";
+import { router } from "expo-router";
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL || "https://box4realestate.cloud/api/v1";
@@ -39,9 +41,15 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized errors globally (e.g., clear token, logout user)
       console.log(
-        "Unauthorized! Clearing auth store and redirecting to login.",
+        "Unauthorized! Clearing caches and redirecting to login.",
       );
       useAuthStore.getState().clearAuth();
+      useProfileStore.getState().setProfile(null);
+      
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
+      router.replace("/(auth)/login");
     }
     return Promise.reject(error);
   },
