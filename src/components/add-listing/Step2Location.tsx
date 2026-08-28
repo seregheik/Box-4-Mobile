@@ -38,7 +38,7 @@ export function Step2Location() {
             style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
             placeholder="e.g. 40.7128"
             placeholderTextColor={theme.textSecondary}
-            keyboardType="numbers-and-punctuation"
+            keyboardType="numeric"
             value={formData.latitude}
             onChangeText={(text) => updateFormData({ latitude: text })}
           />
@@ -49,7 +49,7 @@ export function Step2Location() {
             style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
             placeholder="e.g. -74.0060"
             placeholderTextColor={theme.textSecondary}
-            keyboardType="numbers-and-punctuation"
+            keyboardType="numeric"
             value={formData.longitude}
             onChangeText={(text) => updateFormData({ longitude: text })}
           />
