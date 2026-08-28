@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useColorScheme,
 } from "react-native";
 import { ThemedText } from "./themed-text";
 
@@ -16,6 +17,8 @@ const { width } = Dimensions.get("window");
 export const GlobalAlert = () => {
   const { isVisible, title, message, buttons, hideAlert } = useAlertStore();
   const [isRendered, setIsRendered] = useState(false);
+  const colorScheme = useColorScheme() ?? "light";
+  const theme = Colors[colorScheme];
 
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.9)).current;
@@ -70,19 +73,31 @@ export const GlobalAlert = () => {
       style={[styles.overlay, { opacity }]}
       pointerEvents={isVisible ? "auto" : "none"}
     >
-      <Animated.View style={[styles.alertBox, { transform: [{ scale }] }]}>
+      <Animated.View 
+        style={[
+          styles.alertBox, 
+          { 
+            backgroundColor: theme.backgroundElement,
+            transform: [{ scale }] 
+          }
+        ]}
+      >
         <ThemedText style={styles.title}>{title}</ThemedText>
-        {!!message && <ThemedText style={styles.message}>{message}</ThemedText>}
+        {!!message && (
+          <ThemedText style={[styles.message, { color: theme.textSecondary }]}>
+            {message}
+          </ThemedText>
+        )}
 
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { borderColor: theme.backgroundSelected }]}>
           {defaultButtons.map((btn, index) => (
             <TouchableOpacity
               key={index}
               style={[
                 styles.button,
-                index > 0 && styles.buttonBorder,
+                index > 0 && [styles.buttonBorder, { borderColor: theme.backgroundSelected }],
                 btn.style === "destructive" && {
-                  backgroundColor: Colors.light.tintRed,
+                  backgroundColor: theme.tintRed,
                 },
               ]}
               onPress={() => handlePress(btn.onPress)}
@@ -90,8 +105,9 @@ export const GlobalAlert = () => {
               <Text
                 style={[
                   styles.buttonText,
+                  { color: theme.tintBlue },
                   btn.style === "cancel" && {
-                    color: Colors.light.textSecondary,
+                    color: theme.textSecondary,
                     fontWeight: "normal",
                   },
                   btn.style === "destructive" && { color: "#fff" },
@@ -121,7 +137,6 @@ const styles = StyleSheet.create({
   },
   alertBox: {
     width: width * 0.8,
-    backgroundColor: "#fff",
     borderRadius: 16,
     paddingTop: Spacing.four,
     alignItems: "center",
@@ -141,7 +156,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 14,
-    color: "#666",
     textAlign: "center",
     marginBottom: Spacing.four,
     paddingHorizontal: Spacing.three,
@@ -149,7 +163,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     borderTopWidth: 1,
-    borderColor: "#eee",
     width: "100%",
   },
   button: {
@@ -160,11 +173,9 @@ const styles = StyleSheet.create({
   },
   buttonBorder: {
     borderLeftWidth: 1,
-    borderColor: "#eee",
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: Colors.light.tintBlue,
   },
 });
