@@ -1,15 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
-import { useAlertStore } from '@/store/alert.store';
-import { Colors, Spacing } from '@/constants/theme';
-import { ThemedText } from './themed-text';
+import { Colors, Spacing } from "@/constants/theme";
+import { useAlertStore } from "@/store/alert.store";
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ThemedText } from "./themed-text";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export const GlobalAlert = () => {
   const { isVisible, title, message, buttons, hideAlert } = useAlertStore();
   const [isRendered, setIsRendered] = useState(false);
-  
+
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.9)).current;
 
@@ -55,30 +62,41 @@ export const GlobalAlert = () => {
     }
   };
 
-  const defaultButtons = buttons && buttons.length > 0 ? buttons : [{ text: 'OK' }];
+  const defaultButtons =
+    buttons && buttons.length > 0 ? buttons : [{ text: "OK" }];
 
   return (
-    <Animated.View style={[styles.overlay, { opacity }]} pointerEvents={isVisible ? 'auto' : 'none'}>
+    <Animated.View
+      style={[styles.overlay, { opacity }]}
+      pointerEvents={isVisible ? "auto" : "none"}
+    >
       <Animated.View style={[styles.alertBox, { transform: [{ scale }] }]}>
         <ThemedText style={styles.title}>{title}</ThemedText>
         {!!message && <ThemedText style={styles.message}>{message}</ThemedText>}
-        
+
         <View style={styles.buttonContainer}>
           {defaultButtons.map((btn, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={index}
               style={[
-                styles.button, 
+                styles.button,
                 index > 0 && styles.buttonBorder,
-                btn.style === 'destructive' && { backgroundColor: Colors.light.tintRed }
-              ]} 
+                btn.style === "destructive" && {
+                  backgroundColor: Colors.light.tintRed,
+                },
+              ]}
               onPress={() => handlePress(btn.onPress)}
             >
-              <Text style={[
-                styles.buttonText, 
-                btn.style === 'cancel' && { color: Colors.light.textSecondary, fontWeight: 'normal' },
-                btn.style === 'destructive' && { color: '#fff' }
-              ]}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  btn.style === "cancel" && {
+                    color: Colors.light.textSecondary,
+                    fontWeight: "normal",
+                  },
+                  btn.style === "destructive" && { color: "#fff" },
+                ]}
+              >
                 {btn.text}
               </Text>
             </TouchableOpacity>
@@ -91,59 +109,62 @@ export const GlobalAlert = () => {
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 99999,
   },
   alertBox: {
     width: width * 0.8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     paddingTop: Spacing.four,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowRadius: 3,
     elevation: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: Spacing.one,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: Spacing.three,
   },
   message: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: Spacing.four,
     paddingHorizontal: Spacing.three,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderTopWidth: 1,
-    borderColor: '#eee',
-    width: '100%',
+    borderColor: "#eee",
+    width: "100%",
   },
   button: {
     flex: 1,
     paddingVertical: Spacing.three,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonBorder: {
     borderLeftWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.light.tintBlue,
   },
 });
