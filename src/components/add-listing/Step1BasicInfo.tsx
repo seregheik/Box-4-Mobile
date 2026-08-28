@@ -47,7 +47,11 @@ export function Step1BasicInfo() {
   const selectedCategory = categories.find(c => c.name.toLowerCase() === formData.category.toLowerCase());
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView 
+      contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets={true}
+    >
       <ThemedText style={styles.sectionTitle}>Basic Information</ThemedText>
       
       <View style={styles.inputGroup}>

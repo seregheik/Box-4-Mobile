@@ -10,7 +10,11 @@ export function Step2Location() {
   const theme = Colors[colorScheme];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView 
+      contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets={true}
+    >
       <ThemedText style={styles.sectionTitle}>Location Information</ThemedText>
       
       <View style={styles.inputGroup}>
