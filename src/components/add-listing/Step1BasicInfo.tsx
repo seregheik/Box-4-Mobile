@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Modal, FlatList } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Modal, FlatList } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { useAddListingStore } from '@/store/add-listing.store';
 import { AgentService, Category } from '@/services/agent.service';
@@ -47,10 +48,11 @@ export function Step1BasicInfo() {
   const selectedCategory = categories.find(c => c.name.toLowerCase() === formData.category.toLowerCase());
 
   return (
-    <ScrollView 
+    <KeyboardAwareScrollView 
       contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
       keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets={true}
+      enableOnAndroid={true}
+      extraScrollHeight={20}
     >
       <ThemedText style={styles.sectionTitle}>Basic Information</ThemedText>
       
@@ -210,7 +212,7 @@ export function Step1BasicInfo() {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

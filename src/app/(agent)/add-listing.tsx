@@ -1,4 +1,4 @@
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -26,38 +26,33 @@ export default function AddListingScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }} 
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.header}>
-          <BackButton />
-          <ThemedText style={styles.title}>Add Listing</ThemedText>
-          {/* Placeholder to center title */}
-          <View style={{ width: 40 }} />
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
+        <BackButton />
+        <ThemedText style={styles.title}>Add Listing</ThemedText>
+        {/* Placeholder to center title */}
+        <View style={{ width: 40 }} />
+      </View>
+      
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBarBackground}>
+          <View 
+            style={[
+              styles.progressBarFill, 
+              { 
+                backgroundColor: theme.tintBlue, 
+                width: `${(currentStep / 3) * 100}%` 
+              }
+            ]} 
+          />
         </View>
-        
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBarBackground}>
-            <View 
-              style={[
-                styles.progressBarFill, 
-                { 
-                  backgroundColor: theme.tintBlue, 
-                  width: `${(currentStep / 3) * 100}%` 
-                }
-              ]} 
-            />
-          </View>
-          <ThemedText style={styles.progressText}>Step {currentStep} of 3</ThemedText>
-        </View>
+        <ThemedText style={styles.progressText}>Step {currentStep} of 3</ThemedText>
+      </View>
 
-        <View style={styles.content}>
-          {renderStep()}
-        </View>
-      </ThemedView>
-    </KeyboardAvoidingView>
+      <View style={styles.content}>
+        {renderStep()}
+      </View>
+    </ThemedView>
   );
 }
 

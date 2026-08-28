@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { useAddListingStore } from '@/store/add-listing.store';
 import { Colors, Spacing } from '@/constants/theme';
@@ -10,10 +11,11 @@ export function Step2Location() {
   const theme = Colors[colorScheme];
 
   return (
-    <ScrollView 
+    <KeyboardAwareScrollView 
       contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
       keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets={true}
+      enableOnAndroid={true}
+      extraScrollHeight={20}
     >
       <ThemedText style={styles.sectionTitle}>Location Information</ThemedText>
       
@@ -70,7 +72,7 @@ export function Step2Location() {
           <ThemedText style={styles.buttonText}>Next: Photos</ThemedText>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
