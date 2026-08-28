@@ -23,6 +23,7 @@ export function Step3Photos() {
   const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
   const [loading, setLoading] = useState(false);
+  const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const router = useRouter();
 
   const pickImage = async () => {
@@ -42,6 +43,11 @@ export function Step3Photos() {
     const newPhotos = [...photos];
     newPhotos.splice(index, 1);
     setPhotos(newPhotos);
+    if (coverPhotoIndex === index) {
+      setCoverPhotoIndex(0);
+    } else if (coverPhotoIndex > index) {
+      setCoverPhotoIndex(coverPhotoIndex - 1);
+    }
   };
 
   const submitForm = async () => {
@@ -76,7 +82,7 @@ export function Step3Photos() {
         total_rooms: formData.total_rooms ? Number(formData.total_rooms) : 0,
         status: "active",
         is_published: true,
-        cover_photo_url: imageUrls.length > 0 ? imageUrls[0] : "",
+        cover_photo_url: imageUrls.length > 0 ? imageUrls[coverPhotoIndex] : "",
         image_urls: imageUrls,
         image_ids: [],
       };
@@ -120,10 +126,27 @@ export function Step3Photos() {
         </ThemedText>
       </TouchableOpacity>
 
+      {photos.length > 0 && (
+        <ThemedText style={styles.instructionText}>
+          Tap on a photo to set it as the cover image.
+        </ThemedText>
+      )}
+
       <View style={styles.photosGrid}>
         {photos.map((uri, index) => (
-          <View key={index} style={styles.photoContainer}>
+          <TouchableOpacity 
+            key={index} 
+            style={[styles.photoContainer, coverPhotoIndex === index && { borderWidth: 2, borderColor: theme.tintBlue, borderRadius: 10 }]}
+            onPress={() => setCoverPhotoIndex(index)}
+            activeOpacity={0.8}
+          >
             <Image source={{ uri }} style={styles.photo} />
+            {coverPhotoIndex === index && (
+              <View style={styles.coverBadge}>
+                <Ionicons name="star" size={12} color="#fff" />
+                <ThemedText style={styles.coverBadgeText}>Cover</ThemedText>
+              </View>
+            )}
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => removePhoto(index)}
@@ -134,7 +157,7 @@ export function Step3Photos() {
                 color={Colors.light.tintRed}
               />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -197,6 +220,12 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     marginHorizontal: -Spacing.one,
   },
+  instructionText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: Spacing.two,
+    textAlign: "center",
+  },
   photoContainer: {
     width: "33.33%",
     padding: Spacing.one,
@@ -206,6 +235,23 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 8,
+  },
+  coverBadge: {
+    position: "absolute",
+    bottom: Spacing.one + 4,
+    left: Spacing.one + 4,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  coverBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    marginLeft: 2,
+    fontWeight: "bold",
   },
   removeButton: {
     position: "absolute",
