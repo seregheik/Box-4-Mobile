@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService } from "@/services/agent.service";
 import { useAddListingStore } from "@/store/add-listing.store";
+import { useAlertStore } from "@/store/alert.store";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
@@ -89,7 +90,8 @@ export function Step3Photos() {
 
       console.log("Submitting payload:", payload);
       await AgentService.createListing(payload);
-      Alert.alert("Success", "Listing created successfully!", [
+      
+      useAlertStore.getState().showAlert("Success", "Listing created successfully!", [
         {
           text: "OK",
           onPress: () => {
@@ -100,7 +102,7 @@ export function Step3Photos() {
       ]);
     } catch (error: any) {
       console.error("Failed to create listing", error.response?.data || error);
-      Alert.alert("Error", "Failed to create listing. Please try again.");
+      useAlertStore.getState().showAlert("Error", "Failed to create listing. Please try again.");
     } finally {
       setLoading(false);
     }
