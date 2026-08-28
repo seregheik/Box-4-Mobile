@@ -1,26 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Modal, FlatList } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { useAddListingStore } from '@/store/add-listing.store';
-import { AgentService, Category } from '@/services/agent.service';
-import { Colors, Spacing } from '@/constants/theme';
-import { useColorScheme } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from "@/components/themed-text";
+import { Colors, Spacing } from "@/constants/theme";
+import { AgentService, Category } from "@/services/agent.service";
+import { useAddListingStore } from "@/store/add-listing.store";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { Ionicons } from "@expo/vector-icons";
 
 export function Step1BasicInfo() {
   const { formData, updateFormData, nextStep } = useAddListingStore();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
-  const [facilityInput, setFacilityInput] = useState('');
-  const colorScheme = useColorScheme() ?? 'light';
+  const [facilityInput, setFacilityInput] = useState("");
+  const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
 
   const addFacility = () => {
     if (facilityInput.trim()) {
-      updateFormData({ facilities: [...formData.facilities, facilityInput.trim()] });
-      setFacilityInput('');
+      updateFormData({
+        facilities: [...formData.facilities, facilityInput.trim()],
+      });
+      setFacilityInput("");
     }
   };
 
@@ -37,7 +48,7 @@ export function Step1BasicInfo() {
         const data = await AgentService.getCategories();
         setCategories(data);
       } catch (error) {
-        console.error('Failed to load categories', error);
+        console.error("Failed to load categories", error);
       } finally {
         setLoading(false);
       }
@@ -45,21 +56,26 @@ export function Step1BasicInfo() {
     fetchCategories();
   }, []);
 
-  const selectedCategory = categories.find(c => c.name.toLowerCase() === formData.category.toLowerCase());
+  const selectedCategory = categories.find(
+    (c) => c.name.toLowerCase() === formData.category.toLowerCase(),
+  );
 
   return (
-    <KeyboardAwareScrollView 
+    <KeyboardAwareScrollView
       contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
       keyboardShouldPersistTaps="handled"
       enableOnAndroid={true}
       extraScrollHeight={20}
     >
       <ThemedText style={styles.sectionTitle}>Basic Information</ThemedText>
-      
+
       <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Title *</ThemedText>
         <TextInput
-          style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+          style={[
+            styles.input,
+            { color: theme.text, borderColor: theme.backgroundSelected },
+          ]}
           placeholder="e.g. Beautiful 3 Bedroom House"
           placeholderTextColor={theme.textSecondary}
           value={formData.title}
@@ -69,15 +85,22 @@ export function Step1BasicInfo() {
 
       <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Category *</ThemedText>
-        <TouchableOpacity 
-          style={[styles.input, { borderColor: theme.backgroundSelected, justifyContent: 'center' }]} 
+        <TouchableOpacity
+          style={[
+            styles.input,
+            { borderColor: theme.backgroundSelected, justifyContent: "center" },
+          ]}
           onPress={() => setShowPicker(true)}
         >
           {loading ? (
             <ActivityIndicator size="small" color={theme.tintBlue} />
           ) : (
-            <ThemedText style={{ color: selectedCategory ? theme.text : theme.textSecondary }}>
-              {selectedCategory ? selectedCategory.name : 'Select a category'}
+            <ThemedText
+              style={{
+                color: selectedCategory ? theme.text : theme.textSecondary,
+              }}
+            >
+              {selectedCategory ? selectedCategory.name : "Select a category"}
             </ThemedText>
           )}
         </TouchableOpacity>
@@ -86,7 +109,10 @@ export function Step1BasicInfo() {
       <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Price *</ThemedText>
         <TextInput
-          style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+          style={[
+            styles.input,
+            { color: theme.text, borderColor: theme.backgroundSelected },
+          ]}
           placeholder="e.g. 150000"
           placeholderTextColor={theme.textSecondary}
           keyboardType="numeric"
@@ -96,10 +122,15 @@ export function Step1BasicInfo() {
       </View>
 
       <View style={styles.row}>
-        <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
+        <View
+          style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}
+        >
           <ThemedText style={styles.label}>Bedrooms</ThemedText>
           <TextInput
-            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+            style={[
+              styles.input,
+              { color: theme.text, borderColor: theme.backgroundSelected },
+            ]}
             placeholder="0"
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
@@ -110,7 +141,10 @@ export function Step1BasicInfo() {
         <View style={[styles.inputGroup, { flex: 1 }]}>
           <ThemedText style={styles.label}>Bathrooms</ThemedText>
           <TextInput
-            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+            style={[
+              styles.input,
+              { color: theme.text, borderColor: theme.backgroundSelected },
+            ]}
             placeholder="0"
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
@@ -121,10 +155,15 @@ export function Step1BasicInfo() {
       </View>
 
       <View style={styles.row}>
-        <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
+        <View
+          style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}
+        >
           <ThemedText style={styles.label}>Balconies</ThemedText>
           <TextInput
-            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+            style={[
+              styles.input,
+              { color: theme.text, borderColor: theme.backgroundSelected },
+            ]}
             placeholder="0"
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
@@ -135,7 +174,10 @@ export function Step1BasicInfo() {
         <View style={[styles.inputGroup, { flex: 1 }]}>
           <ThemedText style={styles.label}>Total Rooms</ThemedText>
           <TextInput
-            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
+            style={[
+              styles.input,
+              { color: theme.text, borderColor: theme.backgroundSelected },
+            ]}
             placeholder="0"
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
@@ -149,34 +191,57 @@ export function Step1BasicInfo() {
         <ThemedText style={styles.label}>Facilities</ThemedText>
         <View style={styles.facilityInputContainer}>
           <TextInput
-            style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected, flex: 1, marginRight: Spacing.two }]}
+            style={[
+              styles.input,
+              {
+                color: theme.text,
+                borderColor: theme.backgroundSelected,
+                flex: 1,
+                marginRight: Spacing.two,
+              },
+            ]}
             placeholder="e.g. Parking lot, Garden"
             placeholderTextColor={theme.textSecondary}
             value={facilityInput}
             onChangeText={setFacilityInput}
             onSubmitEditing={addFacility}
           />
-          <TouchableOpacity 
-            style={[styles.addButton, { backgroundColor: theme.tintBlue }]} 
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: theme.tintBlue }]}
             onPress={addFacility}
           >
-            <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Add</ThemedText>
+            <ThemedText style={{ color: "#fff", fontWeight: "bold" }}>
+              Add
+            </ThemedText>
           </TouchableOpacity>
         </View>
         <View style={styles.facilitiesContainer}>
           {formData.facilities.map((facility, index) => (
-            <View key={index} style={[styles.facilityChip, { backgroundColor: theme.backgroundSelected }]}>
+            <View
+              key={index}
+              style={[
+                styles.facilityChip,
+                { backgroundColor: theme.backgroundSelected },
+              ]}
+            >
               <ThemedText style={styles.facilityText}>{facility}</ThemedText>
-              <TouchableOpacity onPress={() => removeFacility(index)} style={styles.facilityRemove}>
-                <Ionicons name="close-circle" size={16} color={theme.textSecondary} />
+              <TouchableOpacity
+                onPress={() => removeFacility(index)}
+                style={styles.facilityRemove}
+              >
+                <Ionicons
+                  name="close-circle"
+                  size={16}
+                  color={theme.textSecondary}
+                />
               </TouchableOpacity>
             </View>
           ))}
         </View>
       </View>
 
-      <TouchableOpacity 
-        style={[styles.button, { backgroundColor: theme.tintBlue }]} 
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.tintBlue }]}
         onPress={nextStep}
         disabled={!formData.title || !formData.category || !formData.price}
       >
@@ -186,14 +251,19 @@ export function Step1BasicInfo() {
       {/* Category Picker Modal */}
       <Modal visible={showPicker} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.background }]}>
+          <View
+            style={[styles.modalContent, { backgroundColor: theme.background }]}
+          >
             <ThemedText style={styles.modalTitle}>Select Category</ThemedText>
             <FlatList
               data={categories}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity 
-                  style={[styles.modalItem, { borderBottomColor: theme.backgroundSelected }]}
+                <TouchableOpacity
+                  style={[
+                    styles.modalItem,
+                    { borderBottomColor: theme.backgroundSelected },
+                  ]}
                   onPress={() => {
                     updateFormData({ category: item.name.toLowerCase() });
                     setShowPicker(false);
@@ -203,11 +273,23 @@ export function Step1BasicInfo() {
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity 
-              style={[styles.cancelButton, { backgroundColor: theme.buttonGrey }]}
+            <TouchableOpacity
+              style={[
+                styles.cancelButton,
+                { backgroundColor: theme.buttonGrey },
+              ]}
               onPress={() => setShowPicker(false)}
             >
-              <ThemedText style={{ color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}>Cancel</ThemedText>
+              <ThemedText
+                style={{
+                  color:
+                    colorScheme === "light"
+                      ? Colors.light.text
+                      : Colors.dark.text,
+                }}
+              >
+                Cancel
+              </ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -219,10 +301,11 @@ export function Step1BasicInfo() {
 const styles = StyleSheet.create({
   container: {
     padding: Spacing.four,
+    // paddingBottom: Spacing.five,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: Spacing.four,
   },
   inputGroup: {
@@ -230,39 +313,39 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: Spacing.two,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 4,
     padding: Spacing.three,
     fontSize: 16,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   facilityInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   addButton: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three + 2, // to match input height roughly
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
   facilitiesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: Spacing.two,
   },
   facilityChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
-    borderRadius: 16,
+    borderRadius: 20,
     marginRight: Spacing.two,
     marginBottom: Spacing.two,
   },
@@ -274,30 +357,31 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   button: {
-    padding: Spacing.four,
-    borderRadius: 8,
-    alignItems: 'center',
+    padding: Spacing.three,
+    borderRadius: 4,
+    alignItems: "center",
     marginTop: Spacing.four,
+    marginBottom: Spacing.five,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: Spacing.four,
-    maxHeight: '60%',
+    maxHeight: "60%",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: Spacing.three,
   },
   modalItem: {
@@ -306,8 +390,8 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     padding: Spacing.three,
-    borderRadius: 8,
-    alignItems: 'center',
+    borderRadius: 4,
+    alignItems: "center",
     marginTop: Spacing.three,
   },
 });
