@@ -47,37 +47,42 @@ export function Step3Photos() {
   const submitForm = async () => {
     try {
       setLoading(true);
-      const data = new FormData();
+      const imageUrls: string[] = [];
 
-      // Append text fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== "") {
-          if (Array.isArray(value)) {
-            // Append each item in the array separately for multipart/form-data
-            value.forEach(item => {
-              data.append(key, String(item));
-            });
-          } else {
-            data.append(key, String(value));
-          }
-        }
-      });
-
-      // Append photos
-      photos.forEach((photoUri, index) => {
-        const filename = photoUri.split("/").pop() || `photo_${index}.jpg`;
+      // Upload photos sequentially
+      for (let i = 0; i < photos.length; i++) {
+        const photoUri = photos[i];
+        const filename = photoUri.split("/").pop() || `photo_${i}.jpg`;
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : `image/jpeg`;
 
-        // React Native FormData format for files
-        data.append("uploaded_images", {
+        const uploadData = new FormData();
+        uploadData.append("file", {
           uri: photoUri,
           name: filename,
           type,
         } as any);
-      });
-      console.log(data);
-      await AgentService.createListing(data);
+
+        const uploadResult = await AgentService.uploadMedia(uploadData);
+        imageUrls.push(uploadResult.relative_url);
+      }
+
+      // Build JSON payload
+      const payload = {
+        ...formData,
+        bedrooms: formData.bedrooms ? Number(formData.bedrooms) : 0,
+        bathrooms: formData.bathrooms ? Number(formData.bathrooms) : 0,
+        balconies: formData.balconies ? Number(formData.balconies) : 0,
+        total_rooms: formData.total_rooms ? Number(formData.total_rooms) : 0,
+        status: "active",
+        is_published: true,
+        cover_photo_url: imageUrls.length > 0 ? imageUrls[0] : "",
+        image_urls: imageUrls,
+        image_ids: [],
+      };
+
+      console.log("Submitting payload:", payload);
+      await AgentService.createListing(payload);
       Alert.alert("Success", "Listing created successfully!", [
         {
           text: "OK",

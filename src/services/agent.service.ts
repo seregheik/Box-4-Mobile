@@ -146,14 +146,22 @@ export const AgentService = {
   },
 
   /**
-   * Create a new property listing
+   * Upload a media file
    */
-  createListing: async (data: FormData): Promise<Listing> => {
-    const response = await apiClient.post('/agents/properties/', data, {
+  uploadMedia: async (data: FormData): Promise<{ message: string, url: string, relative_url: string, filename: string, size_bytes: number, content_type: string }> => {
+    const response = await apiClient.post('/media/upload/', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  },
+
+  /**
+   * Create a new property listing
+   */
+  createListing: async (data: any): Promise<Listing> => {
+    const response = await apiClient.post('/agents/properties/', data);
     return response.data;
   },
 
