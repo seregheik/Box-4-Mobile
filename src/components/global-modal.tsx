@@ -6,7 +6,9 @@ import {
   Animated,
   StyleSheet,
   TouchableWithoutFeedback,
-  useColorScheme
+  useColorScheme,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { ThemedButton } from "./themed-button";
 import { ThemedText } from "./themed-text";
@@ -82,32 +84,37 @@ export function GlobalModal() {
           tint={colorScheme === "dark" ? "dark" : "light"}
           style={styles.modalOverlay}
         >
-          <TouchableWithoutFeedback>
-            <Animated.View
-              style={[
-                styles.modalContent,
-                {
-                  backgroundColor: theme.background,
-                  transform: [{ translateY }],
-                },
-              ]}
-            >
-              {title && (
-                <ThemedText style={styles.modalTitle}>{title}</ThemedText>
-              )}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "padding"}
+            style={{ width: "100%", maxHeight: "100%", justifyContent: "flex-end" }}
+          >
+            <TouchableWithoutFeedback>
+              <Animated.View
+                style={[
+                  styles.modalContent,
+                  {
+                    backgroundColor: theme.background,
+                    transform: [{ translateY }],
+                  },
+                ]}
+              >
+                {title && (
+                  <ThemedText style={styles.modalTitle}>{title}</ThemedText>
+                )}
 
-              {content}
+                {content}
 
-              {showCancelButton && (
-                <ThemedButton
-                  title={cancelText || "Cancel"}
-                  variant="secondary"
-                  style={styles.cancelButton}
-                  onPress={handleClose}
-                />
-              )}
-            </Animated.View>
-          </TouchableWithoutFeedback>
+                {showCancelButton && (
+                  <ThemedButton
+                    title={cancelText || "Cancel"}
+                    variant="secondary"
+                    style={styles.cancelButton}
+                    onPress={handleClose}
+                  />
+                )}
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </BlurView>
       </TouchableWithoutFeedback>
     </Animated.View>
