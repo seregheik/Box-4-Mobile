@@ -3,6 +3,8 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicato
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedButton } from '@/components/themed-button';
@@ -32,6 +34,7 @@ export default function EditProfileScreen() {
   const [country, setCountry] = useState('');
   const [bio, setBio] = useState('');
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   
   const { profileData } = useLocalSearchParams();
 
@@ -85,6 +88,35 @@ export default function EditProfileScreen() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const handleGPSLocation = async () => {
+    try {
+      setIsFetchingLocation(true);
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      let geocode = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      });
+      
+      if (geocode && geocode.length > 0) {
+        const place = geocode[0];
+        if (place.city || place.subregion) setCity(place.city || place.subregion || '');
+        if (place.region) setState(place.region);
+        if (place.country) setCountry(place.country);
+      }
+    } catch (error) {
+      console.error('Error fetching location', error);
+      alert('Could not fetch location.');
+    } finally {
+      setIsFetchingLocation(false);
     }
   };
 
@@ -145,7 +177,11 @@ export default function EditProfileScreen() {
         <View style={{ width: 40 }} />
       </View>
       
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
         
         {/* Profile Picture */}
         <View style={styles.imageSection}>
@@ -192,6 +228,89 @@ export default function EditProfileScreen() {
             </View>
           </View>
           
+          <View style={styles.locationSectionHeader}>
+            <ThemedText style={styles.sectionSubTitle}>Location</ThemedText>
+            <TouchableOpacity onPress={handleGPSLocation} style={styles.gpsButton}>
+              {isFetchingLocation ? (
+                <ActivityIndicator size="small" color={theme.tintRed} />
+              ) : (
+                <>
+                  <Ionicons name="navigate" size={16} color={theme.tintRed} />
+                  <ThemedText style={[styles.gpsText, { color: theme.tintRed }]}>Use GPS</ThemedText>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Search Address</ThemedText>
+            <View style={styles.autocompleteWrapper}>
+              <GooglePlacesAutocomplete
+                placeholder="Search for a city, state, or country..."
+                fetchDetails={true}
+                onPress={(data, details = null) => {
+                  if (details) {
+                    let extractedCity = '';
+                    let extractedState = '';
+                    let extractedCountry = '';
+                    
+                    details.address_components.forEach(component => {
+                      if (component.types.includes('locality')) extractedCity = component.long_name;
+                      if (!extractedCity && component.types.includes('administrative_area_level_2')) extractedCity = component.long_name; // Fallback to county/subregion
+                      if (component.types.includes('administrative_area_level_1')) extractedState = component.long_name;
+                      if (component.types.includes('country')) extractedCountry = component.long_name;
+                    });
+                    
+                    if (extractedCity) setCity(extractedCity);
+                    if (extractedState) setState(extractedState);
+                    if (extractedCountry) setCountry(extractedCountry);
+                  }
+                }}
+                query={{
+                  key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+                  language: 'en',
+                }}
+                styles={{
+                  textInputContainer: {
+                    width: '100%',
+                    backgroundColor: theme.backgroundElement,
+                    borderRadius: 12,
+                  },
+                  textInput: {
+                    height: 52,
+                    color: theme.text,
+                    fontSize: 16,
+                    backgroundColor: 'transparent',
+                    paddingHorizontal: Spacing.three,
+                  },
+                  listView: {
+                    backgroundColor: theme.background,
+                    borderRadius: 12,
+                    marginTop: Spacing.one,
+                    elevation: 3,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                  },
+                  row: {
+                    backgroundColor: theme.background,
+                    padding: Spacing.three,
+                    height: 44,
+                    flexDirection: 'row',
+                  },
+                  description: {
+                    color: theme.text,
+                  }
+                }}
+                textInputProps={{
+                  placeholderTextColor: theme.textSecondary,
+                }}
+                enablePoweredByContainer={false}
+              />
+            </View>
+          </View>
+
           <View style={styles.rowGroup}>
             <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
               <ThemedText style={styles.label}>City</ThemedText>
@@ -326,6 +445,33 @@ const styles = StyleSheet.create({
   },
   formSection: {
     marginBottom: Spacing.six,
+  },
+  locationSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.three,
+    marginTop: Spacing.four,
+  },
+  sectionSubTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  gpsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.two,
+    backgroundColor: 'rgba(214, 2, 2, 0.1)',
+    borderRadius: 8,
+  },
+  gpsText: {
+    fontWeight: '600',
+    marginLeft: 4,
+    fontSize: 14,
+  },
+  autocompleteWrapper: {
+    position: 'relative',
+    zIndex: 1, // Ensure dropdown appears over other elements
   },
   rowGroup: {
     flexDirection: 'row',
