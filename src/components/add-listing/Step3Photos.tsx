@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService } from "@/services/agent.service";
 import { useAddListingStore } from "@/store/add-listing.store";
-import { useAlertStore } from "@/store/alert.store";
+import { useModalStore } from "@/store/modal.store";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
@@ -90,22 +90,70 @@ export function Step3Photos() {
       console.log("Submitting payload:", payload);
       await AgentService.createListing(payload);
 
-      useAlertStore
-        .getState()
-        .showAlert("Success", "Listing created successfully!", [
-          {
-            text: "OK",
-            onPress: () => {
-              resetForm();
-              router.back();
-            },
-          },
-        ]);
+      useModalStore.getState().showModal({
+        title: "Success",
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <ThemedText style={{ textAlign: "center", marginBottom: Spacing.five }}>
+              Your listing is now published.
+            </ThemedText>
+            <View style={{ flexDirection: "row" }}>
+              <ThemedButton
+                title="Add More"
+                variant="outline"
+                style={{ flex: 1, marginRight: Spacing.two }}
+                onPress={() => {
+                  useModalStore.getState().hideModal();
+                  resetForm();
+                  // By resetting the form, currentStep goes back to 1.
+                }}
+              />
+              <ThemedButton
+                title="Finish"
+                variant="primary"
+                style={{ flex: 1 }}
+                onPress={() => {
+                  useModalStore.getState().hideModal();
+                  resetForm();
+                  router.back();
+                }}
+              />
+            </View>
+          </View>
+        ),
+      });
     } catch (error: any) {
       console.error("Failed to create listing", error.response?.data || error);
-      useAlertStore
-        .getState()
-        .showAlert("Error", "Failed to create listing. Please try again.");
+      
+      useModalStore.getState().showModal({
+        title: "Error",
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <ThemedText style={{ textAlign: "center", marginBottom: Spacing.five }}>
+              An error occurred.
+            </ThemedText>
+            <View style={{ flexDirection: "row" }}>
+              <ThemedButton
+                title="Close"
+                variant="outline"
+                style={{ flex: 1, marginRight: Spacing.two }}
+                onPress={() => useModalStore.getState().hideModal()}
+              />
+              <ThemedButton
+                title="Retry"
+                variant="primary"
+                style={{ flex: 1 }}
+                onPress={() => {
+                  useModalStore.getState().hideModal();
+                  submitForm();
+                }}
+              />
+            </View>
+          </View>
+        ),
+      });
     } finally {
       setLoading(false);
     }
