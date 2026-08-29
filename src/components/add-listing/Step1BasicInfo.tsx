@@ -1,4 +1,5 @@
 import { ThemedButton } from "@/components/themed-button";
+import { ThemedModal } from "@/components/themed-modal";
 import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService, Category } from "@/services/agent.service";
@@ -7,7 +8,6 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Modal,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -248,39 +248,30 @@ export function Step1BasicInfo() {
       />
 
       {/* Category Picker Modal */}
-      <Modal visible={showPicker} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View
-            style={[styles.modalContent, { backgroundColor: theme.background }]}
-          >
-            <ThemedText style={styles.modalTitle}>Select Category</ThemedText>
-            <FlatList
-              data={categories}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.modalItem,
-                    { borderBottomColor: theme.backgroundSelected },
-                  ]}
-                  onPress={() => {
-                    updateFormData({ category: item.name.toLowerCase() });
-                    setShowPicker(false);
-                  }}
-                >
-                  <ThemedText>{item.name}</ThemedText>
-                </TouchableOpacity>
-              )}
-            />
-            <ThemedButton
-              title="Cancel"
-              variant="secondary"
-              style={styles.cancelButton}
-              onPress={() => setShowPicker(false)}
-            />
-          </View>
-        </View>
-      </Modal>
+      <ThemedModal
+        visible={showPicker}
+        onClose={() => setShowPicker(false)}
+        title="Select Category"
+      >
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.modalItem,
+                { borderBottomColor: theme.backgroundSelected },
+              ]}
+              onPress={() => {
+                updateFormData({ category: item.name.toLowerCase() });
+                setShowPicker(false);
+              }}
+            >
+              <ThemedText>{item.name}</ThemedText>
+            </TouchableOpacity>
+          )}
+        />
+      </ThemedModal>
     </KeyboardAwareScrollView>
   );
 }
@@ -353,31 +344,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-end",
-  },
-  modalContent: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: Spacing.four,
-    maxHeight: "60%",
-    marginBottom: Spacing.five,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: Spacing.three,
-  },
   modalItem: {
     paddingVertical: Spacing.three,
     borderBottomWidth: 1,
-  },
-  cancelButton: {
-    padding: Spacing.three,
-    borderRadius: 4,
-    alignItems: "center",
-    marginTop: Spacing.three,
   },
 });
