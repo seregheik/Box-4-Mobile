@@ -1,3 +1,4 @@
+import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService } from "@/services/agent.service";
@@ -8,14 +9,12 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
   Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
 
 export function Step3Photos() {
@@ -90,19 +89,23 @@ export function Step3Photos() {
 
       console.log("Submitting payload:", payload);
       await AgentService.createListing(payload);
-      
-      useAlertStore.getState().showAlert("Success", "Listing created successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            resetForm();
-            router.back();
+
+      useAlertStore
+        .getState()
+        .showAlert("Success", "Listing created successfully!", [
+          {
+            text: "OK",
+            onPress: () => {
+              resetForm();
+              router.back();
+            },
           },
-        },
-      ]);
+        ]);
     } catch (error: any) {
       console.error("Failed to create listing", error.response?.data || error);
-      useAlertStore.getState().showAlert("Error", "Failed to create listing. Please try again.");
+      useAlertStore
+        .getState()
+        .showAlert("Error", "Failed to create listing. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -136,9 +139,16 @@ export function Step3Photos() {
 
       <View style={styles.photosGrid}>
         {photos.map((uri, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={[styles.photoContainer, coverPhotoIndex === index && { borderWidth: 2, borderColor: theme.tintBlue, borderRadius: 10 }]}
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.photoContainer,
+              coverPhotoIndex === index && {
+                borderWidth: 2,
+                borderColor: theme.tintBlue,
+                borderRadius: 10,
+              },
+            ]}
             onPress={() => setCoverPhotoIndex(index)}
             activeOpacity={0.8}
           >
@@ -164,36 +174,22 @@ export function Step3Photos() {
       </View>
 
       <View style={styles.actionRow}>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            styles.secondaryButton,
-            { borderColor: theme.buttonGrey },
-          ]}
+        <ThemedButton
+          title="Back"
+          variant="outline"
+          style={[styles.button, { flex: 1 }]}
           onPress={prevStep}
           disabled={loading}
-        >
-          <ThemedText style={{ color: theme.text }}>Back</ThemedText>
-        </TouchableOpacity>
+        />
 
-        <TouchableOpacity
-          style={[
-            styles.button,
-            {
-              backgroundColor: theme.tintBlue,
-              flex: 2,
-              marginLeft: Spacing.two,
-            },
-          ]}
+        <ThemedButton
+          title="Submit Listing"
+          variant="primary"
+          style={[styles.button, { flex: 2, marginLeft: Spacing.two }]}
           onPress={submitForm}
           disabled={loading || photos.length === 0}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <ThemedText style={styles.buttonText}>Submit Listing</ThemedText>
-          )}
-        </TouchableOpacity>
+          loading={loading}
+        />
       </View>
     </ScrollView>
   );
@@ -267,10 +263,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.five,
   },
   button: {
-    padding: Spacing.four,
-    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: Spacing.five,
   },
   secondaryButton: {
     flex: 1,

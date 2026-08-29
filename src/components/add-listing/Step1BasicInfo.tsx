@@ -1,3 +1,4 @@
+import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService, Category } from "@/services/agent.service";
@@ -206,14 +207,12 @@ export function Step1BasicInfo() {
             onChangeText={setFacilityInput}
             onSubmitEditing={addFacility}
           />
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: theme.tintBlue }]}
+          <ThemedButton
+            title="Add"
+            variant="primary"
+            style={styles.addButton}
             onPress={addFacility}
-          >
-            <ThemedText style={{ color: "#fff", fontWeight: "bold" }}>
-              Add
-            </ThemedText>
-          </TouchableOpacity>
+          />
         </View>
         <View style={styles.facilitiesContainer}>
           {formData.facilities.map((facility, index) => (
@@ -240,13 +239,13 @@ export function Step1BasicInfo() {
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.tintBlue }]}
+      <ThemedButton
+        title="Next: Location"
+        variant="primary"
+        style={styles.button}
         onPress={nextStep}
         disabled={!formData.title || !formData.category || !formData.price}
-      >
-        <ThemedText style={styles.buttonText}>Next: Location</ThemedText>
-      </TouchableOpacity>
+      />
 
       {/* Category Picker Modal */}
       <Modal visible={showPicker} transparent animationType="slide">
@@ -273,24 +272,12 @@ export function Step1BasicInfo() {
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity
-              style={[
-                styles.cancelButton,
-                { backgroundColor: theme.buttonGrey },
-              ]}
+            <ThemedButton
+              title="Cancel"
+              variant="secondary"
+              style={styles.cancelButton}
               onPress={() => setShowPicker(false)}
-            >
-              <ThemedText
-                style={{
-                  color:
-                    colorScheme === "light"
-                      ? Colors.light.text
-                      : Colors.dark.text,
-                }}
-              >
-                Cancel
-              </ThemedText>
-            </TouchableOpacity>
+            />
           </View>
         </View>
       </Modal>
@@ -357,8 +344,6 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   button: {
-    padding: Spacing.three,
-    borderRadius: 4,
     alignItems: "center",
     marginTop: Spacing.four,
     marginBottom: Spacing.five,
@@ -378,6 +363,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     padding: Spacing.four,
     maxHeight: "60%",
+    marginBottom: Spacing.five,
   },
   modalTitle: {
     fontSize: 18,
