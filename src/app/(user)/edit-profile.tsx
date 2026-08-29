@@ -113,7 +113,7 @@ export default function EditProfileScreen() {
   if (isLoading) {
     return (
       <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={theme.tintBlue} />
+        <ActivityIndicator size="large" color={theme.tintRed} />
       </ThemedView>
     );
   }
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: Colors.light.tintBlue,
+    backgroundColor: Colors.light.tintRed,
     width: 32,
     height: 32,
     borderRadius: 16,

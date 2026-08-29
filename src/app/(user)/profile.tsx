@@ -48,7 +48,7 @@ export default function ProfileScreen() {
   if (isLoading) {
     return (
       <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={theme.tintBlue} />
+        <ActivityIndicator size="large" color={theme.tintRed} />
       </ThemedView>
     );
   }
@@ -58,7 +58,7 @@ export default function ProfileScreen() {
       <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
         <ThemedText>Failed to load profile.</ThemedText>
         <TouchableOpacity onPress={fetchProfile} style={{ marginTop: 20 }}>
-          <ThemedText style={{ color: theme.tintBlue }}>Retry</ThemedText>
+          <ThemedText style={{ color: theme.tintRed }}>Retry</ThemedText>
         </TouchableOpacity>
       </ThemedView>
     );
@@ -90,9 +90,12 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.editButton}
-            onPress={() => router.push('/(user)/edit-profile')}
+            onPress={() => router.push({
+              pathname: '/(user)/edit-profile',
+              params: { profileData: JSON.stringify(profile) }
+            })}
           >
-            <ThemedText style={{ color: theme.tintBlue, fontWeight: 'bold' }}>Edit Profile</ThemedText>
+            <ThemedText style={{ color: theme.tintRed, fontWeight: 'bold' }}>Edit Profile</ThemedText>
           </TouchableOpacity>
 
           <View style={styles.profileImageContainer}>
@@ -131,7 +134,10 @@ export default function ProfileScreen() {
 
             <TouchableOpacity 
               style={[styles.completeButton, { backgroundColor: '#f5a623' }]}
-              onPress={() => router.push('/(user)/edit-profile')}
+              onPress={() => router.push({
+                pathname: '/(user)/edit-profile',
+                params: { profileData: JSON.stringify(profile) }
+              })}
             >
               <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Complete Profile</ThemedText>
             </TouchableOpacity>
