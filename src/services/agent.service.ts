@@ -171,5 +171,12 @@ export const AgentService = {
   getListing: async (id: string): Promise<Listing> => {
     const response = await apiClient.get(`/agents/properties/${id}/`);
     return response.data;
+  },
+
+  /**
+   * Delete a specific property listing by ID
+   */
+  deleteListing: async (id: string): Promise<void> => {
+    await apiClient.delete(`/agents/properties/${id}/`);
   }
 };

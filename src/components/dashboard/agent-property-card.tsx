@@ -17,7 +17,13 @@ export function AgentPropertyCard({ property }: AgentPropertyCardProps) {
   const router = useRouter();
   
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(`/(agent)/listing/${property.id}`)}>
+    <TouchableOpacity 
+      activeOpacity={0.8} 
+      onPress={() => router.push({
+        pathname: '/(agent)/listing/[id]',
+        params: { id: property.id, initialData: JSON.stringify(property) }
+      })}
+    >
       <ThemedView type="backgroundElement" style={styles.container}>
       <Image source={{ uri: property.cover_photo }} style={styles.image} />
       <View style={styles.content}>

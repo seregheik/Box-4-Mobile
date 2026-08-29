@@ -10,6 +10,7 @@ export default function AgentLayout() {
 
   return (
     <Tabs
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#ffffff",
