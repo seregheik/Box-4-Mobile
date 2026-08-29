@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   View,
+  Keyboard,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -91,7 +92,10 @@ export function Step1BasicInfo() {
             styles.input,
             { borderColor: theme.backgroundSelected, justifyContent: "center" },
           ]}
-          onPress={() => setShowPicker(true)}
+          onPress={() => {
+            Keyboard.dismiss();
+            setShowPicker(true);
+          }}
         >
           {loading ? (
             <ActivityIndicator size="small" color={theme.tintBlue} />
@@ -243,7 +247,10 @@ export function Step1BasicInfo() {
         title="Next: Location"
         variant="primary"
         style={styles.button}
-        onPress={nextStep}
+        onPress={() => {
+          Keyboard.dismiss();
+          nextStep();
+        }}
         disabled={!formData.title || !formData.category || !formData.price}
       />
 

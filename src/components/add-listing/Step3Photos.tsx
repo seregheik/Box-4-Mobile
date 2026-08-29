@@ -152,7 +152,7 @@ export function Step3Photos() {
                 fontWeight: "bold",
               }}
             >
-              An error occurred.
+              An error occurred
             </ThemedText>
             <View style={{ flexDirection: "row" }}>
               <ThemedButton

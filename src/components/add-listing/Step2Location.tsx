@@ -5,7 +5,7 @@ import { useAddListingStore } from "@/store/add-listing.store";
 import { useAlertStore } from "@/store/alert.store";
 import * as Location from "expo-location";
 import { useState } from "react";
-import { StyleSheet, TextInput, useColorScheme, View } from "react-native";
+import { StyleSheet, TextInput, useColorScheme, View, Keyboard } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MapView, { Marker } from "react-native-maps";
 
@@ -115,7 +115,10 @@ export function Step2Location() {
         variant="secondary"
         style={styles.locationButton}
         textStyle={{ color: theme.tintBlue }}
-        onPress={getCurrentLocation}
+        onPress={() => {
+          Keyboard.dismiss();
+          getCurrentLocation();
+        }}
         disabled={isLocating}
         loading={isLocating}
       />
@@ -165,7 +168,10 @@ export function Step2Location() {
           title="Next: Photos"
           variant="primary"
           style={[styles.button, { flex: 2, marginLeft: Spacing.two }]}
-          onPress={nextStep}
+          onPress={() => {
+            Keyboard.dismiss();
+            nextStep();
+          }}
           disabled={
             !formData.address || !formData.latitude || !formData.longitude
           }
