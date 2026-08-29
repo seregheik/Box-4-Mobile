@@ -1,22 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-  useColorScheme,
-  Animated,
-} from "react-native";
-import { BlurView } from "expo-blur";
-import { ThemedButton } from "./themed-button";
-import { ThemedText } from "./themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { useModalStore } from "@/store/modal.store";
+import { BlurView } from "expo-blur";
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  useColorScheme
+} from "react-native";
+import { ThemedButton } from "./themed-button";
+import { ThemedText } from "./themed-text";
 
 export function GlobalModal() {
-  const { isVisible, content, title, showCancelButton, cancelText, onClose, hideModal } = useModalStore();
+  const {
+    isVisible,
+    content,
+    title,
+    showCancelButton,
+    cancelText,
+    onClose,
+    hideModal,
+  } = useModalStore();
   const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
-  
+
   const [isRendered, setIsRendered] = useState(false);
   const translateY = useRef(new Animated.Value(500)).current; // Start off-screen
   const opacity = useRef(new Animated.Value(0)).current;
@@ -63,7 +70,12 @@ export function GlobalModal() {
   };
 
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity }]}>
+    <Animated.View
+      style={[
+        StyleSheet.absoluteFill,
+        { zIndex: 9999, elevation: 9999, opacity },
+      ]}
+    >
       <TouchableWithoutFeedback onPress={handleClose}>
         <BlurView
           intensity={30}
@@ -74,9 +86,9 @@ export function GlobalModal() {
             <Animated.View
               style={[
                 styles.modalContent,
-                { 
+                {
                   backgroundColor: theme.background,
-                  transform: [{ translateY }]
+                  transform: [{ translateY }],
                 },
               ]}
             >

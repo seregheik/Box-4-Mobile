@@ -1,3 +1,7 @@
+import {
+  AnimatedErrorIcon,
+  AnimatedSuccessIcon,
+} from "@/components/animated-status-icons";
 import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
@@ -14,7 +18,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  View
+  View,
 } from "react-native";
 
 export function Step3Photos() {
@@ -95,7 +99,15 @@ export function Step3Photos() {
         showCancelButton: false,
         content: (
           <View style={{ marginTop: Spacing.two }}>
-            <ThemedText style={{ textAlign: "center", marginBottom: Spacing.five }}>
+            <AnimatedSuccessIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
               Your listing is now published.
             </ThemedText>
             <View style={{ flexDirection: "row" }}>
@@ -125,13 +137,21 @@ export function Step3Photos() {
       });
     } catch (error: any) {
       console.error("Failed to create listing", error.response?.data || error);
-      
+
       useModalStore.getState().showModal({
         title: "Error",
         showCancelButton: false,
         content: (
           <View style={{ marginTop: Spacing.two }}>
-            <ThemedText style={{ textAlign: "center", marginBottom: Spacing.five }}>
+            <AnimatedErrorIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
               An error occurred.
             </ThemedText>
             <View style={{ flexDirection: "row" }}>
