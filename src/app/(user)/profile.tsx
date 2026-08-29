@@ -72,7 +72,7 @@ export default function ProfileScreen() {
     let completed = 0;
     let total = 7; // full_name, phone_number, city, state, country, bio, profile_picture
     
-    if (p.full_name) completed++;
+    if (p.full_name || p.user?.full_name) completed++;
     if (p.phone_number) completed++;
     if (p.city) completed++;
     if (p.state) completed++;
