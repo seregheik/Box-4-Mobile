@@ -7,6 +7,10 @@ import { Colors, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { AgentService, Listing } from "@/services/agent.service";
 import { useModalStore } from "@/store/modal.store";
+import {
+  AnimatedErrorIcon,
+  AnimatedSuccessIcon,
+} from "@/components/animated-status-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -39,10 +43,70 @@ function DeleteConfirmationModalContent({
     try {
       setIsDeleting(true);
       await AgentService.deleteListing(listingId);
-      useModalStore.getState().hideModal();
-      router.back();
+      
+      useModalStore.getState().showModal({
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <AnimatedSuccessIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Successfully deleted.
+            </ThemedText>
+            <View style={{ flexDirection: "row" }}>
+              <ThemedButton
+                title="Finish"
+                variant="primary"
+                style={{ flex: 1 }}
+                onPress={() => {
+                  useModalStore.getState().hideModal();
+                  router.back();
+                }}
+              />
+            </View>
+          </View>
+        ),
+      });
     } catch (error) {
       console.error(error);
+      useModalStore.getState().showModal({
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <AnimatedErrorIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Property was not successfully deleted.
+            </ThemedText>
+            <View style={{ flexDirection: "row" }}>
+              <ThemedButton
+                title="Close"
+                variant="outline"
+                style={{ flex: 1, marginRight: Spacing.two }}
+                onPress={() => useModalStore.getState().hideModal()}
+              />
+              <ThemedButton
+                title="Retry"
+                variant="primary"
+                style={{ flex: 1 }}
+                onPress={handleDelete}
+              />
+            </View>
+          </View>
+        ),
+      });
     } finally {
       setIsDeleting(false);
     }
