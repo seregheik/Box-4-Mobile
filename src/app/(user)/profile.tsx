@@ -28,8 +28,9 @@ export default function ProfileScreen() {
 
   const fetchProfile = async () => {
     try {
-      setIsLoading(true);
+      if (!profile) setIsLoading(true);
       const data = await UserService.getBuyerProfile();
+      // React will automatically diff and update only the changed fields on the screen
       setProfile(data);
     } catch (error) {
       console.error('Failed to fetch buyer profile:', error);
@@ -47,7 +48,8 @@ export default function ProfileScreen() {
     }
   };
 
-  if (isLoading) {
+  // Only show the full-screen loader if we have NO profile data at all
+  if (isLoading && !profile) {
     return (
       <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
         <ActivityIndicator size="large" color={theme.tintRed} />
