@@ -1,15 +1,15 @@
+import { Colors, Spacing } from "@/constants/theme";
 import React from "react";
 import {
   Modal,
+  ModalProps,
   StyleSheet,
+  TouchableWithoutFeedback,
   View,
   useColorScheme,
-  ModalProps,
-  TouchableWithoutFeedback,
 } from "react-native";
-import { ThemedText } from "./themed-text";
 import { ThemedButton } from "./themed-button";
-import { Colors, Spacing } from "@/constants/theme";
+import { ThemedText } from "./themed-text";
 
 export interface ThemedModalProps extends ModalProps {
   visible: boolean;
@@ -52,9 +52,9 @@ export function ThemedModal({
               {title && (
                 <ThemedText style={styles.modalTitle}>{title}</ThemedText>
               )}
-              
+
               {children}
-              
+
               {showCancelButton && (
                 <ThemedButton
                   title={cancelText}
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     padding: Spacing.four,
     maxHeight: "80%",
-    marginBottom: Spacing.five,
+    paddingBottom: 70,
   },
   modalTitle: {
     fontSize: 18,
