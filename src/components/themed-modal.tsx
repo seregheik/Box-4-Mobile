@@ -1,16 +1,6 @@
-import { Colors, Spacing } from "@/constants/theme";
-import { BlurView } from "expo-blur";
-import React from "react";
-import {
-  Modal,
-  ModalProps,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-  useColorScheme,
-} from "react-native";
-import { ThemedButton } from "./themed-button";
-import { ThemedText } from "./themed-text";
+import React, { useEffect } from "react";
+import { ModalProps } from "react-native";
+import { useModalStore } from "@/store/modal.store";
 
 export interface ThemedModalProps extends ModalProps {
   visible: boolean;
@@ -28,73 +18,38 @@ export function ThemedModal({
   children,
   showCancelButton = true,
   cancelText = "Cancel",
-  ...rest
 }: ThemedModalProps) {
-  const colorScheme = useColorScheme() ?? "light";
-  const theme = Colors[colorScheme];
+  const { showModal, hideModal } = useModalStore();
 
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-      {...rest}
-    >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <BlurView
-          intensity={30}
-          tint={colorScheme === "dark" ? "dark" : "light"}
-          style={styles.modalOverlay}
-        >
-          <TouchableWithoutFeedback>
-            <View
-              style={[
-                styles.modalContent,
-                { backgroundColor: theme.background },
-              ]}
-            >
-              {title && (
-                <ThemedText style={styles.modalTitle}>{title}</ThemedText>
-              )}
+  useEffect(() => {
+    if (visible) {
+      showModal({
+        content: children,
+        title,
+        onClose,
+        showCancelButton,
+        cancelText,
+      });
+    } else {
+      hideModal();
+    }
+    
+    // We only want to trigger this when visibility changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
-              {children}
+  // We need to update the content if it changes while visible
+  useEffect(() => {
+    if (visible) {
+      showModal({
+        content: children,
+        title,
+        onClose,
+        showCancelButton,
+        cancelText,
+      });
+    }
+  }, [children, title, showCancelButton, cancelText]);
 
-              {showCancelButton && (
-                <ThemedButton
-                  title={cancelText}
-                  variant="secondary"
-                  style={styles.cancelButton}
-                  onPress={onClose}
-                />
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </BlurView>
-      </TouchableWithoutFeedback>
-    </Modal>
-  );
+  return null;
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)", // slightly lighter since blur adds darkening/lightening
-    justifyContent: "flex-end",
-  },
-  modalContent: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: Spacing.four,
-    maxHeight: "80%",
-    paddingBottom: 70,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: Spacing.three,
-  },
-  cancelButton: {
-    marginTop: Spacing.three,
-  },
-});
