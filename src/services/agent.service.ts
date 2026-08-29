@@ -178,5 +178,13 @@ export const AgentService = {
    */
   deleteListing: async (id: string): Promise<void> => {
     await apiClient.delete(`/agents/properties/${id}/`);
+  },
+
+  /**
+   * Update a specific property listing by ID
+   */
+  updateListing: async (id: string, data: Partial<Listing>): Promise<Listing> => {
+    const response = await apiClient.patch(`/agents/properties/${id}/`, data);
+    return response.data;
   }
 };

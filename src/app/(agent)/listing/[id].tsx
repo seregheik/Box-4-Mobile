@@ -21,6 +21,7 @@ import {
   StyleSheet,
   TextInput,
   View,
+  TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -147,6 +148,119 @@ function DeleteConfirmationModalContent({
   );
 }
 
+function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, onUpdate: (updated: Listing) => void }) {
+  const [status, setStatus] = useState(listing.status.toLowerCase());
+  const [isUpdating, setIsUpdating] = useState(false);
+  const theme = useTheme();
+
+  const statuses = [
+    { label: "Active", value: "active" },
+    { label: "Pending Approval", value: "pending" },
+    { label: "Sold", value: "sold" },
+    { label: "Rejected", value: "rejected" },
+  ];
+
+  const handleUpdate = async () => {
+    try {
+      setIsUpdating(true);
+      const updatedListing = await AgentService.updateListing(listing.id, { status });
+      onUpdate(updatedListing);
+      
+      useModalStore.getState().showModal({
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <AnimatedSuccessIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Property updated successfully.
+            </ThemedText>
+            <ThemedButton
+              title="Close"
+              variant="primary"
+              onPress={() => useModalStore.getState().hideModal()}
+            />
+          </View>
+        ),
+      });
+    } catch (error) {
+      console.error(error);
+      useModalStore.getState().showModal({
+        showCancelButton: false,
+        content: (
+          <View style={{ marginTop: Spacing.two }}>
+            <AnimatedErrorIcon size={80} />
+            <ThemedText
+              style={{
+                textAlign: "center",
+                marginBottom: Spacing.five,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Failed to update property.
+            </ThemedText>
+            <ThemedButton
+              title="Close"
+              variant="outline"
+              onPress={() => useModalStore.getState().hideModal()}
+            />
+          </View>
+        ),
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <View style={{ marginTop: Spacing.two }}>
+      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
+        Change Property Status
+      </ThemedText>
+      
+      <View style={{ marginBottom: Spacing.five }}>
+        {statuses.map(s => (
+          <TouchableOpacity
+            key={s.value}
+            onPress={() => setStatus(s.value)}
+            style={{
+              padding: Spacing.three,
+              borderWidth: 1,
+              borderColor: status === s.value ? theme.tintBlue : theme.backgroundSelected,
+              backgroundColor: status === s.value ? `${theme.tintBlue}15` : theme.backgroundElement,
+              borderRadius: 8,
+              marginBottom: Spacing.two,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <ThemedText style={{ fontWeight: status === s.value ? 'bold' : 'normal', color: status === s.value ? theme.tintBlue : theme.text }}>
+              {s.label}
+            </ThemedText>
+            {status === s.value && <Ionicons name="checkmark-circle" size={20} color={theme.tintBlue} />}
+          </TouchableOpacity>
+        ))}
+      </View>
+      
+      <ThemedButton
+        title="Update Property"
+        variant="primary"
+        onPress={handleUpdate}
+        disabled={status === listing.status.toLowerCase() || isUpdating}
+        loading={isUpdating}
+      />
+    </View>
+  );
+}
+
 export default function ListingDetailsScreen() {
   const { id, initialData } = useLocalSearchParams<{
     id: string;
@@ -194,7 +308,7 @@ export default function ListingDetailsScreen() {
         <View style={styles.header}>
           <BackButton />
           <ThemedText style={styles.headerTitle}>Listing Details</ThemedText>
-          <View style={{ width: 40 }} />
+          <View style={styles.editButtonPlaceholder} />
         </View>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <Skeleton height={250} borderRadius={0} />
@@ -289,7 +403,18 @@ export default function ListingDetailsScreen() {
       <View style={styles.header}>
         <BackButton />
         <ThemedText style={styles.headerTitle}>Listing Details</ThemedText>
-        <View style={{ width: 40 }} />
+        <TouchableOpacity
+          onPress={() => {
+            useModalStore.getState().showModal({
+              title: "Update Property",
+              showCancelButton: true,
+              content: <UpdatePropertyModalContent listing={listing} onUpdate={(updated) => setListing(updated)} />
+            });
+          }}
+          style={styles.editButton}
+        >
+          <Ionicons name="pencil" size={20} color={theme.text} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -607,6 +732,18 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  editButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(128, 128, 128, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: Spacing.two,
+  },
+  editButtonPlaceholder: {
+    width: 40,
   },
   scrollContent: {
     paddingBottom: Spacing.six,
