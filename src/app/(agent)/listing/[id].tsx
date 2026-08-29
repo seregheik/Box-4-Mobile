@@ -24,6 +24,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { EditBasicInfoModal } from "@/components/listing-details/edit-basic-info-modal";
+import { EditDetailsModal } from "@/components/listing-details/edit-details-modal";
+import { EditLocationModal } from "@/components/listing-details/edit-location-modal";
+import { EditPhotosModal } from "@/components/listing-details/edit-photos-modal";
 
 const { width } = Dimensions.get("window");
 
@@ -419,39 +423,54 @@ export default function ListingDetailsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Images */}
-        {images.length > 0 ? (
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            style={styles.imageScroll}
-          >
-            {images.map((img, idx) => (
-              <Image
-                key={idx}
-                source={{ uri: img }}
-                style={styles.coverImage}
+        <View style={{ position: 'relative' }}>
+          {images.length > 0 ? (
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              style={styles.imageScroll}
+            >
+              {images.map((img, idx) => (
+                <Image
+                  key={idx}
+                  source={{ uri: img }}
+                  style={styles.coverImage}
+                />
+              ))}
+            </ScrollView>
+          ) : (
+            <View
+              style={[
+                styles.coverImage,
+                styles.noImageContainer,
+                { backgroundColor: theme.backgroundElement },
+              ]}
+            >
+              <Ionicons
+                name="home-outline"
+                size={48}
+                color={theme.textSecondary}
               />
-            ))}
-          </ScrollView>
-        ) : (
-          <View
-            style={[
-              styles.coverImage,
-              styles.noImageContainer,
-              { backgroundColor: theme.backgroundElement },
-            ]}
+              <ThemedText themeColor="textSecondary">
+                No images available
+              </ThemedText>
+            </View>
+          )}
+          
+          <TouchableOpacity 
+            style={styles.floatingEditPhotosButton}
+            onPress={() => {
+              useModalStore.getState().showModal({
+                title: "Update Photos",
+                content: <EditPhotosModal listing={listing} onUpdate={setListing} />,
+                showCancelButton: true
+              });
+            }}
           >
-            <Ionicons
-              name="home-outline"
-              size={48}
-              color={theme.textSecondary}
-            />
-            <ThemedText themeColor="textSecondary">
-              No images available
-            </ThemedText>
-          </View>
-        )}
+            <Ionicons name="camera" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.content}>
           {/* Header Info */}
@@ -473,16 +492,40 @@ export default function ListingDetailsScreen() {
               </ThemedText>
             </View>
           </View>
-          <ThemedText style={[styles.price, { color: theme.tintBlue }]}>
-            N {listing.price.split(".")[0]}
-          </ThemedText>
-          <ThemedText style={styles.category}>
-            {listing.category.toUpperCase()}
-          </ThemedText>
+          
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View>
+              <ThemedText style={[styles.price, { color: theme.tintBlue }]}>
+                N {listing.price.split(".")[0]}
+              </ThemedText>
+              <ThemedText style={styles.category}>
+                {listing.category.toUpperCase()}
+              </ThemedText>
+            </View>
+            <TouchableOpacity 
+              onPress={() => useModalStore.getState().showModal({
+                title: "Update Basic Info",
+                content: <EditBasicInfoModal listing={listing} onUpdate={setListing} />,
+                showCancelButton: true
+              })}
+              style={styles.sectionEditButton}
+            >
+              <Ionicons name="pencil" size={16} color={theme.textSecondary} />
+            </TouchableOpacity>
+          </View>
 
           {/* Location */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Location</ThemedText>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionTitle}>Location</ThemedText>
+              <TouchableOpacity onPress={() => useModalStore.getState().showModal({
+                title: "Update Location",
+                content: <EditLocationModal listing={listing} onUpdate={setListing} />,
+                showCancelButton: true
+              })}>
+                <Ionicons name="pencil" size={18} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
             <View style={styles.row}>
               <Ionicons
                 name="location-outline"
@@ -507,7 +550,16 @@ export default function ListingDetailsScreen() {
 
           {/* Rooms Stats */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Details</ThemedText>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionTitle}>Details</ThemedText>
+              <TouchableOpacity onPress={() => useModalStore.getState().showModal({
+                title: "Update Details",
+                content: <EditDetailsModal listing={listing} onUpdate={setListing} />,
+                showCancelButton: true
+              })}>
+                <Ionicons name="pencil" size={18} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
             <View style={styles.statsGrid}>
               <View
                 style={[
@@ -587,7 +639,16 @@ export default function ListingDetailsScreen() {
           {/* Facilities */}
           {listing.facilities && listing.facilities.length > 0 && (
             <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Facilities</ThemedText>
+              <View style={styles.sectionHeader}>
+                <ThemedText style={styles.sectionTitle}>Facilities</ThemedText>
+                <TouchableOpacity onPress={() => useModalStore.getState().showModal({
+                  title: "Update Details",
+                  content: <EditDetailsModal listing={listing} onUpdate={setListing} />,
+                  showCancelButton: true
+                })}>
+                  <Ionicons name="pencil" size={18} color={theme.textSecondary} />
+                </TouchableOpacity>
+              </View>
               <View style={styles.facilitiesContainer}>
                 {listing.facilities.map((facility, idx) => (
                   <View
@@ -803,7 +864,26 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.three,
+  },
+  sectionEditButton: {
+    padding: Spacing.two,
+    borderRadius: 8,
+    backgroundColor: "rgba(128, 128, 128, 0.1)",
+  },
+  floatingEditPhotosButton: {
+    position: 'absolute',
+    top: Spacing.four,
+    right: Spacing.four,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: Spacing.three,
+    borderRadius: 20,
+    zIndex: 10,
   },
   row: {
     flexDirection: "row",
