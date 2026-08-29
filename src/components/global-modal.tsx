@@ -4,11 +4,11 @@ import { BlurView } from "expo-blur";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
   useColorScheme,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { ThemedButton } from "./themed-button";
 import { ThemedText } from "./themed-text";
@@ -86,7 +86,11 @@ export function GlobalModal() {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "padding"}
-            style={{ width: "100%", maxHeight: "100%", justifyContent: "flex-end" }}
+            style={{
+              width: "100%",
+              maxHeight: "100%",
+              justifyContent: "flex-end",
+            }}
           >
             <TouchableWithoutFeedback>
               <Animated.View
@@ -132,7 +136,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     padding: Spacing.four,
     maxHeight: "80%",
-    paddingBottom: 70,
+    paddingBottom: 170,
+    paddingTop: 50,
   },
   modalTitle: {
     fontSize: 18,
