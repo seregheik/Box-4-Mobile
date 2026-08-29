@@ -95,7 +95,7 @@ export function Step3Photos() {
       await AgentService.createListing(payload);
 
       useModalStore.getState().showModal({
-        title: "Success",
+        // title: "Success",
         showCancelButton: false,
         content: (
           <View style={{ marginTop: Spacing.two }}>
@@ -139,7 +139,7 @@ export function Step3Photos() {
       console.error("Failed to create listing", error.response?.data || error);
 
       useModalStore.getState().showModal({
-        title: "Error",
+        // title: "Error",
         showCancelButton: false,
         content: (
           <View style={{ marginTop: Spacing.two }}>
