@@ -224,8 +224,8 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
   };
 
   return (
-    <View style={{ flex: 1, marginTop: Spacing.two }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{ flexShrink: 1, marginTop: Spacing.two }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
       
       <View style={{ marginBottom: Spacing.five }}>
         {statuses.map(s => (

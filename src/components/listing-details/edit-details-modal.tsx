@@ -95,8 +95,8 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
     JSON.stringify(facilities) !== JSON.stringify(listing.facilities || []);
 
   return (
-    <View style={{ flex: 1, marginTop: Spacing.two }}>
-      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+    <View style={{ flexShrink: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
         <View style={styles.row}>
         <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
           <ThemedText style={styles.label}>Bedrooms</ThemedText>

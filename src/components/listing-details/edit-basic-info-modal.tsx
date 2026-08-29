@@ -91,8 +91,8 @@ export function EditBasicInfoModal({ listing, onUpdate }: EditBasicInfoModalProp
   const hasChanges = title !== listing.title || price !== listing.price.split('.')[0] || category !== listing.category.toLowerCase();
 
   return (
-    <View style={{ flex: 1, marginTop: Spacing.two }}>
-      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+    <View style={{ flexShrink: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
         <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Title</ThemedText>
         <TextInput

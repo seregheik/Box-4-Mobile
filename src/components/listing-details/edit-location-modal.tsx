@@ -114,8 +114,8 @@ export function EditLocationModal({ listing, onUpdate }: EditLocationModalProps)
     longitude !== (listing.longitude?.toString() || "");
 
   return (
-    <View style={{ flex: 1, marginTop: Spacing.two }}>
-      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+    <View style={{ flexShrink: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
         <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Address *</ThemedText>
         <TextInput

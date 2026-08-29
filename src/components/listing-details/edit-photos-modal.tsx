@@ -130,8 +130,8 @@ export function EditPhotosModal({ listing, onUpdate }: EditPhotosModalProps) {
   const hasChanges = JSON.stringify(photos) !== JSON.stringify(initialPhotos) || coverPhotoIndex !== initialCoverIndex;
 
   return (
-    <View style={{ flex: 1, marginTop: Spacing.two }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{ flexShrink: 1, marginTop: Spacing.two }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
         <TouchableOpacity
         style={[
           styles.uploadButton,
