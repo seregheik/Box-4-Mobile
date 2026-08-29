@@ -224,10 +224,8 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
   };
 
   return (
-    <View style={{ marginTop: Spacing.two }}>
-      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
-        Change Property Status
-      </ThemedText>
+    <View style={{ flex: 1, marginTop: Spacing.two }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
       
       <View style={{ marginBottom: Spacing.five }}>
         {statuses.map(s => (
@@ -253,6 +251,7 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
           </TouchableOpacity>
         ))}
       </View>
+      </ScrollView>
       
       <ThemedButton
         title="Update Property"
@@ -260,6 +259,7 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
         onPress={handleUpdate}
         disabled={status === listing.status.toLowerCase() || isUpdating}
         loading={isUpdating}
+        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
       />
     </View>
   );

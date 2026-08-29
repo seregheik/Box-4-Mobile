@@ -114,12 +114,9 @@ export function EditLocationModal({ listing, onUpdate }: EditLocationModalProps)
     longitude !== (listing.longitude?.toString() || "");
 
   return (
-    <ScrollView style={{ marginTop: Spacing.two }} keyboardShouldPersistTaps="handled">
-      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
-        Edit Location
-      </ThemedText>
-      
-      <View style={styles.inputGroup}>
+    <View style={{ flex: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Address *</ThemedText>
         <TextInput
           style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
@@ -192,6 +189,7 @@ export function EditLocationModal({ listing, onUpdate }: EditLocationModalProps)
           />
         </View>
       </View>
+      </ScrollView>
       
       <ThemedButton
         title="Save Changes"
@@ -199,9 +197,9 @@ export function EditLocationModal({ listing, onUpdate }: EditLocationModalProps)
         onPress={handleUpdate}
         disabled={!hasChanges || !address || !latitude || !longitude || isUpdating}
         loading={isUpdating}
-        style={{ marginTop: Spacing.two }}
+        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
       />
-    </ScrollView>
+    </View>
   );
 }
 

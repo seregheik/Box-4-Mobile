@@ -95,12 +95,9 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
     JSON.stringify(facilities) !== JSON.stringify(listing.facilities || []);
 
   return (
-    <ScrollView style={{ marginTop: Spacing.two }} keyboardShouldPersistTaps="handled">
-      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
-        Edit Details & Facilities
-      </ThemedText>
-      
-      <View style={styles.row}>
+    <View style={{ flex: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <View style={styles.row}>
         <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
           <ThemedText style={styles.label}>Bedrooms</ThemedText>
           <TextInput
@@ -174,6 +171,7 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
           ))}
         </View>
       </View>
+      </ScrollView>
       
       <ThemedButton
         title="Save Changes"
@@ -181,9 +179,9 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
         onPress={handleUpdate}
         disabled={!hasChanges || isUpdating}
         loading={isUpdating}
-        style={{ marginTop: Spacing.two }}
+        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
       />
-    </ScrollView>
+    </View>
   );
 }
 

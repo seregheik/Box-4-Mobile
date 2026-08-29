@@ -91,12 +91,9 @@ export function EditBasicInfoModal({ listing, onUpdate }: EditBasicInfoModalProp
   const hasChanges = title !== listing.title || price !== listing.price.split('.')[0] || category !== listing.category.toLowerCase();
 
   return (
-    <ScrollView style={{ marginTop: Spacing.two }} keyboardShouldPersistTaps="handled">
-      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
-        Edit Basic Info
-      </ThemedText>
-      
-      <View style={styles.inputGroup}>
+    <View style={{ flex: 1, marginTop: Spacing.two }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <View style={styles.inputGroup}>
         <ThemedText style={styles.label}>Title</ThemedText>
         <TextInput
           style={[styles.input, { color: theme.text, borderColor: theme.backgroundSelected }]}
@@ -159,6 +156,7 @@ export function EditBasicInfoModal({ listing, onUpdate }: EditBasicInfoModalProp
           </View>
         )}
       </View>
+      </ScrollView>
       
       <ThemedButton
         title="Save Changes"
@@ -166,9 +164,9 @@ export function EditBasicInfoModal({ listing, onUpdate }: EditBasicInfoModalProp
         onPress={handleUpdate}
         disabled={!hasChanges || !title || !price || !category || isUpdating}
         loading={isUpdating}
-        style={{ marginTop: Spacing.two }}
+        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
       />
-    </ScrollView>
+    </View>
   );
 }
 

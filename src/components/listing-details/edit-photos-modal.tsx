@@ -130,12 +130,9 @@ export function EditPhotosModal({ listing, onUpdate }: EditPhotosModalProps) {
   const hasChanges = JSON.stringify(photos) !== JSON.stringify(initialPhotos) || coverPhotoIndex !== initialCoverIndex;
 
   return (
-    <ScrollView style={{ marginTop: Spacing.two }} showsVerticalScrollIndicator={false}>
-      <ThemedText style={{ marginBottom: Spacing.three, fontWeight: 'bold' }}>
-        Edit Photos
-      </ThemedText>
-      
-      <TouchableOpacity
+    <View style={{ flex: 1, marginTop: Spacing.two }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
         style={[
           styles.uploadButton,
           { borderColor: theme.tintBlue, backgroundColor: theme.backgroundElement },
@@ -188,7 +185,8 @@ export function EditPhotosModal({ listing, onUpdate }: EditPhotosModalProps) {
             </TouchableOpacity>
           </TouchableOpacity>
         ))}
-      </View>
+        </View>
+      </ScrollView>
       
       <ThemedButton
         title="Save Changes"
@@ -196,9 +194,9 @@ export function EditPhotosModal({ listing, onUpdate }: EditPhotosModalProps) {
         onPress={handleUpdate}
         disabled={!hasChanges || photos.length === 0 || isUpdating}
         loading={isUpdating}
-        style={{ marginTop: Spacing.four, marginBottom: Spacing.four }}
+        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
       />
-    </ScrollView>
+    </View>
   );
 }
 
