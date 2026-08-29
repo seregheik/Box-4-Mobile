@@ -12,13 +12,17 @@ interface ModalState {
   hideModal: () => void;
 }
 
-export const useModalStore = create<ModalState>((set) => ({
+const initialState = {
   isVisible: false,
   content: null,
   title: undefined,
   cancelText: "Cancel",
   showCancelButton: true,
   onClose: undefined,
-  showModal: (options) => set({ ...options, isVisible: true }),
-  hideModal: () => set({ isVisible: false }),
+};
+
+export const useModalStore = create<ModalState>((set) => ({
+  ...initialState,
+  showModal: (options) => set({ ...initialState, ...options, isVisible: true }),
+  hideModal: () => set(initialState),
 }));

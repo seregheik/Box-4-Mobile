@@ -1,9 +1,9 @@
 import { ThemedButton } from "@/components/themed-button";
-import { ThemedModal } from "@/components/themed-modal";
 import { ThemedText } from "@/components/themed-text";
 import { Colors, Spacing } from "@/constants/theme";
 import { AgentService, Category } from "@/services/agent.service";
 import { useAddListingStore } from "@/store/add-listing.store";
+import { useModalStore } from "@/store/modal.store";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -23,7 +23,6 @@ export function Step1BasicInfo() {
   const { formData, updateFormData, nextStep } = useAddListingStore();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
   const [facilityInput, setFacilityInput] = useState("");
   const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
@@ -62,6 +61,33 @@ export function Step1BasicInfo() {
     (c) => c.name.toLowerCase() === formData.category.toLowerCase(),
   );
 
+  const openCategoryPicker = () => {
+    Keyboard.dismiss();
+    useModalStore.getState().showModal({
+      title: "Select Category",
+      content: (
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.modalItem,
+                { borderBottomColor: theme.backgroundSelected },
+              ]}
+              onPress={() => {
+                updateFormData({ category: item.name.toLowerCase() });
+                useModalStore.getState().hideModal();
+              }}
+            >
+              <ThemedText>{item.name}</ThemedText>
+            </TouchableOpacity>
+          )}
+        />
+      ),
+    });
+  };
+
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
@@ -92,10 +118,7 @@ export function Step1BasicInfo() {
             styles.input,
             { borderColor: theme.backgroundSelected, justifyContent: "center" },
           ]}
-          onPress={() => {
-            Keyboard.dismiss();
-            setShowPicker(true);
-          }}
+          onPress={openCategoryPicker}
         >
           {loading ? (
             <ActivityIndicator size="small" color={theme.tintBlue} />
@@ -253,32 +276,6 @@ export function Step1BasicInfo() {
         }}
         disabled={!formData.title || !formData.category || !formData.price}
       />
-
-      {/* Category Picker Modal */}
-      <ThemedModal
-        visible={showPicker}
-        onClose={() => setShowPicker(false)}
-        title="Select Category"
-      >
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.modalItem,
-                { borderBottomColor: theme.backgroundSelected },
-              ]}
-              onPress={() => {
-                updateFormData({ category: item.name.toLowerCase() });
-                setShowPicker(false);
-              }}
-            >
-              <ThemedText>{item.name}</ThemedText>
-            </TouchableOpacity>
-          )}
-        />
-      </ThemedModal>
     </KeyboardAwareScrollView>
   );
 }
