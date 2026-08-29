@@ -32,6 +32,11 @@ export const UserService = {
     return response.data;
   },
   
+  updateBuyerProfile: async (data: Partial<BuyerProfile>): Promise<BuyerProfile> => {
+    const response = await apiClient.patch('/buyers/profile/', data);
+    return response.data;
+  },
+  
   /**
    * Example endpoint to fetch a specific user's profile
    */

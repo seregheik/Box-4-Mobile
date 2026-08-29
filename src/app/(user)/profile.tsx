@@ -64,7 +64,23 @@ export default function ProfileScreen() {
     );
   }
 
-  const locationString = [profile.city, profile.state, profile.country].filter(Boolean).join(', ');
+  const calculateCompletion = (p: BuyerProfile) => {
+    let completed = 0;
+    let total = 7; // full_name, phone_number, city, state, country, bio, profile_picture
+    
+    if (p.full_name) completed++;
+    if (p.phone_number) completed++;
+    if (p.city) completed++;
+    if (p.state) completed++;
+    if (p.country) completed++;
+    if (p.bio) completed++;
+    if (p.profile_picture) completed++;
+    
+    return Math.round((completed / total) * 100);
+  };
+
+  const completionPercentage = profile ? calculateCompletion(profile) : 0;
+  const locationString = [profile?.city, profile?.state, profile?.country].filter(Boolean).join(', ');
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -72,6 +88,13 @@ export default function ProfileScreen() {
         
         {/* Header Section */}
         <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={() => router.push('/(user)/edit-profile')}
+          >
+            <ThemedText style={{ color: theme.tintBlue, fontWeight: 'bold' }}>Edit Profile</ThemedText>
+          </TouchableOpacity>
+
           <View style={styles.profileImageContainer}>
             {profile.profile_picture ? (
               <Image source={{ uri: profile.profile_picture }} style={styles.profileImage} />
@@ -87,6 +110,33 @@ export default function ProfileScreen() {
             {profile.user.email}
           </ThemedText>
         </View>
+
+        {/* Completion Banner */}
+        {completionPercentage < 100 && (
+          <View style={[styles.completionBanner, { backgroundColor: 'rgba(245, 166, 35, 0.1)' }]}>
+            <View style={styles.completionHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="warning" size={20} color="#f5a623" style={{ marginRight: Spacing.two }} />
+                <ThemedText style={{ fontWeight: 'bold', color: '#f5a623' }}>Profile Incomplete</ThemedText>
+              </View>
+              <ThemedText style={{ fontWeight: 'bold', color: '#f5a623' }}>{completionPercentage}%</ThemedText>
+            </View>
+            <ThemedText style={{ fontSize: 13, color: '#f5a623', marginBottom: Spacing.three, marginTop: Spacing.one }}>
+              Please complete your profile to get the most out of Box-4-Mobile.
+            </ThemedText>
+            
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBarFill, { width: `${completionPercentage}%`, backgroundColor: '#f5a623' }]} />
+            </View>
+
+            <TouchableOpacity 
+              style={[styles.completeButton, { backgroundColor: '#f5a623' }]}
+              onPress={() => router.push('/(user)/edit-profile')}
+            >
+              <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Complete Profile</ThemedText>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Info Section */}
         <View style={styles.infoSection}>
@@ -257,4 +307,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  editButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: Spacing.two,
+  },
+  completionBanner: {
+    borderRadius: 16,
+    padding: Spacing.four,
+    marginBottom: Spacing.six,
+  },
+  completionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressBarContainer: {
+    height: 6,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderRadius: 3,
+    marginBottom: Spacing.three,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  completeButton: {
+    paddingVertical: Spacing.two,
+    borderRadius: 8,
+    alignItems: 'center',
+  }
 });
