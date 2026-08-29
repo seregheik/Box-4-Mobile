@@ -1,7 +1,7 @@
 import { apiClient } from "@/api/client";
 
 export interface LoginCredentials {
-  role: "agent" | "buyer";
+  role?: "agent" | "buyer";
   email?: string;
   password?: string;
 }

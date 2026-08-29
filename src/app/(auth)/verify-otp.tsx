@@ -76,7 +76,7 @@ export default function VerifyOtpScreen() {
         "success",
       );
       setTimeout(() => {
-        router.replace("/(auth)/login");
+        router.replace("/(auth)/login-form");
       }, 1000); // Wait for toast to animate
     } catch (error) {
       console.error("OTP Verification failed:", error);

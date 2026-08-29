@@ -42,7 +42,6 @@ export default function LoginFormScreen() {
     setErrorMessage(null);
     try {
       const response = await AuthService.login({
-        role: "buyer", // Defaulting to buyer since role is required
         email,
         password,
       });
