@@ -112,7 +112,9 @@ export default function ProfileScreen() {
             )}
           </View>
           
-          <ThemedText style={styles.nameText}>{profile.full_name || 'No Name'}</ThemedText>
+          <ThemedText style={styles.nameText}>
+            {profile.full_name || profile.user.full_name || "No Name"}
+          </ThemedText>
           <ThemedText style={styles.emailText} themeColor="textSecondary">
             {profile.user.email}
           </ThemedText>

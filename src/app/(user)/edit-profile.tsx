@@ -40,7 +40,7 @@ export default function EditProfileScreen() {
       try {
         const data = JSON.parse(profileData as string) as BuyerProfile;
         setProfile(data);
-        setFullName(data.full_name || '');
+        setFullName(data.full_name || data.user.full_name || '');
         setPhoneNumber(data.phone_number || '');
         setCity(data.city || '');
         setState(data.state || '');
@@ -61,7 +61,7 @@ export default function EditProfileScreen() {
       setIsLoading(true);
       const data = await UserService.getBuyerProfile();
       setProfile(data);
-      setFullName(data.full_name || '');
+      setFullName(data.full_name || data.user.full_name || '');
       setPhoneNumber(data.phone_number || '');
       setCity(data.city || '');
       setState(data.state || '');
