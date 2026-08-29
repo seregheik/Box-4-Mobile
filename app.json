@@ -18,7 +18,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.Box4Mobile"
+      "package": "com.anonymous.Box4Mobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC4lgFBLF1qfXMRaHaKY4QFn3qEHStiZos"
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -34,11 +39,23 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Box-4-Mobile to use your location."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "17137e88-89b7-47e6-a21f-b2f2fbd3a197"
+      }
     }
   }
 }

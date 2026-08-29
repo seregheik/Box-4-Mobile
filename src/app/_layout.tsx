@@ -5,6 +5,8 @@ import { Slot } from 'expo-router';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { AuthProvider } from '@/context/auth-context';
+import { GlobalAlert } from '@/components/global-alert';
+import { GlobalModal } from '@/components/global-modal';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -15,6 +17,8 @@ export default function RootLayout() {
       <AuthProvider>
         <AnimatedSplashOverlay />
         <Slot />
+        <GlobalAlert />
+        <GlobalModal />
       </AuthProvider>
     </ThemeProvider>
   );

@@ -137,18 +137,24 @@ export default function LoginFormScreen() {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#777"
+                />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.formOptionsRow}>
               <TouchableOpacity>
                 <ThemedText style={styles.forgotPasswordText}>
                   Forgot password?
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <ThemedText style={styles.showPasswordText}>
-                  {showPassword ? "Hide password" : "Show password"}
                 </ThemedText>
               </TouchableOpacity>
             </View>
@@ -230,6 +236,9 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
+  },
+  eyeIcon: {
+    padding: Spacing.one,
   },
   formOptionsRow: {
     flexDirection: "row",

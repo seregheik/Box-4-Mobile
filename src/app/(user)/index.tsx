@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#C00000",
+    color: "#D60202",
   },
   subGreetingText: {
     fontSize: 20,
