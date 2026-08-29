@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, TextInput, BackHandler } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -58,6 +58,21 @@ export default function EditProfileScreen() {
       fetchProfile();
     }
   }, [profileData]);
+
+  // Handle Android hardware back button
+  useEffect(() => {
+    const backAction = () => {
+      router.replace('/(user)/profile');
+      return true; // Prevent default behavior (which goes to home)
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [router]);
 
   const fetchProfile = async () => {
     try {
