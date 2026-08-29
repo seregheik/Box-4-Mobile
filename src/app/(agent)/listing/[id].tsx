@@ -499,77 +499,37 @@ export default function ListingDetailsScreen() {
                 <Ionicons name="pencil" size={18} color={theme.textSecondary} />
               </TouchableOpacity>
             </View>
-            <View style={styles.statsGrid}>
-              <View
-                style={[
-                  styles.statBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons
-                  name="bed-outline"
-                  size={24}
-                  color={theme.textSecondary}
-                />
-                <ThemedText style={styles.statValue}>
-                  {listing.bedrooms}
-                </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                  Beds
+            <View style={styles.minimalStatsGrid}>
+              <View style={styles.minimalStatItem}>
+                <View style={styles.minimalStatIcon}>
+                  <Ionicons name="bed-outline" size={20} color={theme.textSecondary} />
+                </View>
+                <ThemedText style={styles.minimalStatValue}>
+                  {listing.bedrooms} <ThemedText themeColor="textSecondary" style={styles.minimalStatLabel}>Beds</ThemedText>
                 </ThemedText>
               </View>
-              <View
-                style={[
-                  styles.statBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons
-                  name="water-outline"
-                  size={24}
-                  color={theme.textSecondary}
-                />
-                <ThemedText style={styles.statValue}>
-                  {listing.bathrooms}
-                </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                  Baths
+              <View style={styles.minimalStatItem}>
+                <View style={styles.minimalStatIcon}>
+                  <Ionicons name="water-outline" size={20} color={theme.textSecondary} />
+                </View>
+                <ThemedText style={styles.minimalStatValue}>
+                  {listing.bathrooms} <ThemedText themeColor="textSecondary" style={styles.minimalStatLabel}>Baths</ThemedText>
                 </ThemedText>
               </View>
-              <View
-                style={[
-                  styles.statBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons
-                  name="business-outline"
-                  size={24}
-                  color={theme.textSecondary}
-                />
-                <ThemedText style={styles.statValue}>
-                  {listing.balconies}
-                </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                  Balconies
+              <View style={styles.minimalStatItem}>
+                <View style={styles.minimalStatIcon}>
+                  <Ionicons name="business-outline" size={20} color={theme.textSecondary} />
+                </View>
+                <ThemedText style={styles.minimalStatValue}>
+                  {listing.balconies} <ThemedText themeColor="textSecondary" style={styles.minimalStatLabel}>Balconies</ThemedText>
                 </ThemedText>
               </View>
-              <View
-                style={[
-                  styles.statBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons
-                  name="home-outline"
-                  size={24}
-                  color={theme.textSecondary}
-                />
-                <ThemedText style={styles.statValue}>
-                  {listing.total_rooms}
-                </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                  Total Rms
+              <View style={styles.minimalStatItem}>
+                <View style={styles.minimalStatIcon}>
+                  <Ionicons name="home-outline" size={20} color={theme.textSecondary} />
+                </View>
+                <ThemedText style={styles.minimalStatValue}>
+                  {listing.total_rooms} <ThemedText themeColor="textSecondary" style={styles.minimalStatLabel}>Total Rooms</ThemedText>
                 </ThemedText>
               </View>
             </View>
@@ -609,43 +569,18 @@ export default function ListingDetailsScreen() {
           {/* Engagement */}
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Engagement</ThemedText>
-            <View style={styles.engagementRow}>
-              <View
-                style={[
-                  styles.engagementBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons name="eye-outline" size={24} color={theme.tintBlue} />
-                <ThemedText style={styles.engagementValue}>
-                  {listing.views_count}
-                </ThemedText>
-                <ThemedText
-                  style={styles.engagementLabel}
-                  themeColor="textSecondary"
-                >
-                  Views
+            <View style={styles.minimalEngagementRow}>
+              <View style={styles.minimalEngagementItem}>
+                <Ionicons name="eye-outline" size={22} color={theme.tintBlue} />
+                <ThemedText style={styles.minimalEngagementValue}>
+                  {listing.views_count} <ThemedText themeColor="textSecondary" style={styles.minimalEngagementLabel}>Views</ThemedText>
                 </ThemedText>
               </View>
-              <View
-                style={[
-                  styles.engagementBox,
-                  { backgroundColor: theme.backgroundElement },
-                ]}
-              >
-                <Ionicons
-                  name="chatbubble-outline"
-                  size={24}
-                  color={theme.tintBlue}
-                />
-                <ThemedText style={styles.engagementValue}>
-                  {listing.inquiries_count}
-                </ThemedText>
-                <ThemedText
-                  style={styles.engagementLabel}
-                  themeColor="textSecondary"
-                >
-                  Inquiries
+              <View style={styles.minimalEngagementDivider} />
+              <View style={styles.minimalEngagementItem}>
+                <Ionicons name="chatbubble-outline" size={22} color={theme.tintBlue} />
+                <ThemedText style={styles.minimalEngagementValue}>
+                  {listing.inquiries_count} <ThemedText themeColor="textSecondary" style={styles.minimalEngagementLabel}>Inquiries</ThemedText>
                 </ThemedText>
               </View>
             </View>
@@ -833,25 +768,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
-  statsGrid: {
+  minimalStatsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.three,
+    rowGap: Spacing.four,
+    columnGap: Spacing.four,
+    marginTop: Spacing.one,
   },
-  statBox: {
-    flex: 1,
-    minWidth: "20%",
-    padding: Spacing.three,
-    borderRadius: 12,
+  minimalStatItem: {
+    flexDirection: "row",
     alignItems: "center",
+    minWidth: "45%",
   },
-  statValue: {
-    fontSize: 18,
+  minimalStatIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(128,128,128,0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.three,
+  },
+  minimalStatValue: {
+    fontSize: 16,
     fontWeight: "bold",
-    marginVertical: Spacing.one,
   },
-  statLabel: {
-    fontSize: 12,
+  minimalStatLabel: {
+    fontSize: 14,
+    fontWeight: "normal",
   },
   facilitiesContainer: {
     flexDirection: "row",
@@ -867,23 +811,29 @@ const styles = StyleSheet.create({
   facilityText: {
     fontSize: 14,
   },
-  engagementRow: {
+  minimalEngagementRow: {
     flexDirection: "row",
-    gap: Spacing.three,
+    alignItems: "center",
+    marginTop: Spacing.two,
   },
-  engagementBox: {
-    flex: 1,
-    padding: Spacing.four,
-    borderRadius: 12,
+  minimalEngagementItem: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  engagementValue: {
-    fontSize: 24,
+  minimalEngagementValue: {
+    fontSize: 18,
     fontWeight: "bold",
-    marginVertical: Spacing.two,
+    marginLeft: Spacing.two,
   },
-  engagementLabel: {
-    fontSize: 14,
+  minimalEngagementLabel: {
+    fontSize: 16,
+    fontWeight: "normal",
+  },
+  minimalEngagementDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: "rgba(128,128,128,0.3)",
+    marginHorizontal: Spacing.five,
   },
   infoRow: {
     flexDirection: "row",
