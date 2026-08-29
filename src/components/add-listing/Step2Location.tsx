@@ -1,14 +1,52 @@
-import React from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity, useColorScheme, ActivityIndicator } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Location from 'expo-location';
+import MapView, { Marker } from 'react-native-maps';
 import { ThemedText } from '@/components/themed-text';
 import { useAddListingStore } from '@/store/add-listing.store';
+import { useAlertStore } from '@/store/alert.store';
 import { Colors, Spacing } from '@/constants/theme';
 
 export function Step2Location() {
   const { formData, updateFormData, nextStep, prevStep } = useAddListingStore();
+  const [isLocating, setIsLocating] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
   const theme = Colors[colorScheme];
+
+  const getCurrentLocation = async () => {
+    try {
+      setIsLocating(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        useAlertStore.getState().showAlert('Permission Denied', 'Location permission is required to use this feature.');
+        return;
+      }
+      
+      const location = await Location.getCurrentPositionAsync({});
+      updateFormData({ 
+        latitude: location.coords.latitude.toString(), 
+        longitude: location.coords.longitude.toString() 
+      });
+    } catch (error) {
+      console.error(error);
+      useAlertStore.getState().showAlert('Error', 'Failed to get current location.');
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
+  const handleMapPress = (e: any) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    updateFormData({
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+    });
+  };
+
+  const currentLat = parseFloat(formData.latitude);
+  const currentLng = parseFloat(formData.longitude);
+  const hasValidCoordinates = !isNaN(currentLat) && !isNaN(currentLng);
 
   return (
     <KeyboardAwareScrollView 
@@ -30,6 +68,46 @@ export function Step2Location() {
           multiline
         />
       </View>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          region={hasValidCoordinates ? {
+            latitude: currentLat,
+            longitude: currentLng,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          } : {
+            latitude: 40.7128,
+            longitude: -74.0060,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          }}
+          onPress={handleMapPress}
+        >
+          {hasValidCoordinates && (
+            <Marker 
+              coordinate={{ latitude: currentLat, longitude: currentLng }} 
+              draggable
+              onDragEnd={handleMapPress}
+            />
+          )}
+        </MapView>
+      </View>
+
+      <TouchableOpacity 
+        style={[styles.locationButton, { backgroundColor: theme.backgroundSelected }]}
+        onPress={getCurrentLocation}
+        disabled={isLocating}
+      >
+        {isLocating ? (
+          <ActivityIndicator size="small" color={theme.tintBlue} />
+        ) : (
+          <ThemedText style={{ color: theme.tintBlue, fontWeight: 'bold', textAlign: 'center' }}>
+            📍 Use Current GPS Location
+          </ThemedText>
+        )}
+      </TouchableOpacity>
 
       <View style={styles.row}>
         <View style={[styles.inputGroup, { flex: 1, marginRight: Spacing.two }]}>
@@ -100,6 +178,24 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+  },
+  mapContainer: {
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: Spacing.three,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  map: {
+    flex: 1,
+  },
+  locationButton: {
+    padding: Spacing.three,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.four,
   },
   actionRow: {
     flexDirection: 'row',
