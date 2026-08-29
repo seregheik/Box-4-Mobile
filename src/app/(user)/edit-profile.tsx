@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemedText } from '@/components/themed-text';
@@ -33,9 +33,28 @@ export default function EditProfileScreen() {
   const [bio, setBio] = useState('');
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   
+  const { profileData } = useLocalSearchParams();
+
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (profileData) {
+      try {
+        const data = JSON.parse(profileData as string) as BuyerProfile;
+        setProfile(data);
+        setFullName(data.full_name || '');
+        setPhoneNumber(data.phone_number || '');
+        setCity(data.city || '');
+        setState(data.state || '');
+        setCountry(data.country || '');
+        setBio(data.bio || '');
+        setProfilePicture(data.profile_picture || null);
+        setIsLoading(false);
+      } catch (e) {
+        fetchProfile();
+      }
+    } else {
+      fetchProfile();
+    }
+  }, [profileData]);
 
   const fetchProfile = async () => {
     try {
