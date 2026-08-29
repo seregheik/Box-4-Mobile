@@ -376,7 +376,7 @@ export default function EditProfileScreen() {
       <View style={[styles.footer, { paddingBottom: insets.bottom || Spacing.four, borderTopColor: theme.border }]}>
         <ThemedButton
           title="Save Changes"
-          variant="primary"
+          variant="danger"
           onPress={handleSave}
           loading={isSaving}
           disabled={isSaving}
