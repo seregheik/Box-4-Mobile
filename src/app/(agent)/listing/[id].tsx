@@ -346,18 +346,7 @@ export default function ListingDetailsScreen() {
       <View style={styles.header}>
         <BackButton />
         <ThemedText style={styles.headerTitle}>Listing Details</ThemedText>
-        <TouchableOpacity
-          onPress={() => {
-            useModalStore.getState().showModal({
-              title: "Update Property",
-              showCancelButton: true,
-              content: <UpdatePropertyModalContent listing={listing} onUpdate={(updated) => setListing(updated)} />
-            });
-          }}
-          style={styles.editButton}
-        >
-          <Ionicons name="pencil" size={20} color={theme.text} />
-        </TouchableOpacity>
+        <View style={styles.editButtonPlaceholder} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -415,20 +404,37 @@ export default function ListingDetailsScreen() {
           {/* Header Info */}
           <View style={styles.titleRow}>
             <ThemedText style={styles.title}>{listing.title}</ThemedText>
-            <View
-              style={[
-                styles.statusBadge,
-                {
-                  backgroundColor:
-                    listing.status.toLowerCase() === "active"
-                      ? "#7BC043"
-                      : "#f5a623",
-                },
-              ]}
-            >
-              <ThemedText style={styles.statusText}>
-                {listing.status.toUpperCase()}
-              </ThemedText>
+            
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                onPress={() => {
+                  useModalStore.getState().showModal({
+                    title: "Update Status",
+                    showCancelButton: true,
+                    content: <UpdatePropertyModalContent listing={listing} onUpdate={(updated) => setListing(updated)} />
+                  });
+                }}
+                style={{ marginRight: Spacing.two }}
+              >
+                <ThemedText style={{ fontSize: 12, color: theme.tintBlue, fontWeight: 'bold' }}>
+                  CHANGE
+                </ThemedText>
+              </TouchableOpacity>
+              <View
+                style={[
+                  styles.statusBadge,
+                  {
+                    backgroundColor:
+                      listing.status.toLowerCase() === "active"
+                        ? "#7BC043"
+                        : "#f5a623",
+                  },
+                ]}
+              >
+                <ThemedText style={styles.statusText}>
+                  {listing.status.toUpperCase()}
+                </ThemedText>
+              </View>
             </View>
           </View>
           
