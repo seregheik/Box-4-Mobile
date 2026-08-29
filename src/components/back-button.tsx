@@ -4,13 +4,17 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { Spacing } from "@/constants/theme";
 
-export function BackButton() {
+interface BackButtonProps {
+  onPress?: () => void;
+}
+
+export function BackButton({ onPress }: BackButtonProps) {
   const router = useRouter();
 
   return (
     <TouchableOpacity
       style={styles.backButton}
-      onPress={() => router.back()}
+      onPress={onPress || (() => router.back())}
     >
       <Ionicons name="chevron-back" size={24} color="#000" />
     </TouchableOpacity>

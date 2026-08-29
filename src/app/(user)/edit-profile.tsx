@@ -153,7 +153,7 @@ export default function EditProfileScreen() {
         ...(finalProfilePictureUrl ? { profile_picture: finalProfilePictureUrl } : {})
       });
       
-      router.back();
+      router.replace('/(user)/profile');
     } catch (error) {
       console.error('Error saving profile:', error);
     } finally {
@@ -172,7 +172,7 @@ export default function EditProfileScreen() {
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <BackButton />
+        <BackButton onPress={() => router.replace('/(user)/profile')} />
         <ThemedText style={styles.headerTitle}>Edit Profile</ThemedText>
         <View style={{ width: 40 }} />
       </View>
