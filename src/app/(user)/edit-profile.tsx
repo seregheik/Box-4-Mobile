@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserService, BuyerProfile } from '@/services/user.service';
 import { AgentService } from '@/services/agent.service';
 import { BackButton } from '@/components/back-button';
-import { TextInput } from 'react-native-gesture-handler';
+
 
 export default function EditProfileScreen() {
   const router = useRouter();

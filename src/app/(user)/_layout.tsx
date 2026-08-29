@@ -81,6 +81,13 @@ export default function UserLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="edit-profile"
+        options={{
+          href: null,
+          title: "Edit Profile",
+        }}
+      />
     </Tabs>
   );
 }
