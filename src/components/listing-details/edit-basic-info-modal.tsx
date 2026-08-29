@@ -150,14 +150,22 @@ export function EditBasicInfoModal({ listing, onUpdate }: EditBasicInfoModalProp
       </View>
       </ScrollView>
       
-      <ThemedButton
-        title="Save Changes"
-        variant="primary"
-        onPress={handleUpdate}
-        disabled={!hasChanges || !title || !price || !category || isUpdating}
-        loading={isUpdating}
-        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
-      />
+      <View style={{ flexDirection: 'row', gap: Spacing.three, marginTop: Spacing.four, marginBottom: Spacing.two }}>
+        <ThemedButton
+          title="Cancel"
+          variant="secondary"
+          onPress={() => useModalStore.getState().hideModal()}
+          style={{ flex: 1 }}
+        />
+        <ThemedButton
+          title="Save Changes"
+          variant="primary"
+          onPress={handleUpdate}
+          disabled={!hasChanges || !title || !price || !category || isUpdating}
+          loading={isUpdating}
+          style={{ flex: 1 }}
+        />
+      </View>
     </View>
   );
 }

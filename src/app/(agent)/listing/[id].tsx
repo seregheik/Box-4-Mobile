@@ -192,14 +192,22 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
       </View>
       </ScrollView>
       
-      <ThemedButton
-        title="Update Property"
-        variant="primary"
-        onPress={handleUpdate}
-        disabled={status === listing.status.toLowerCase() || isUpdating}
-        loading={isUpdating}
-        style={{ marginTop: Spacing.four, marginBottom: Spacing.two }}
-      />
+      <View style={{ flexDirection: 'row', gap: Spacing.three, marginTop: Spacing.four, marginBottom: Spacing.two }}>
+        <ThemedButton
+          title="Cancel"
+          variant="secondary"
+          onPress={() => useModalStore.getState().hideModal()}
+          style={{ flex: 1 }}
+        />
+        <ThemedButton
+          title="Save Changes"
+          variant="primary"
+          onPress={handleUpdate}
+          disabled={status === listing.status.toLowerCase() || isUpdating}
+          loading={isUpdating}
+          style={{ flex: 1 }}
+        />
+      </View>
     </View>
   );
 }
@@ -392,7 +400,7 @@ export default function ListingDetailsScreen() {
               useModalStore.getState().showModal({
                 title: "Update Photos",
                 content: <EditPhotosModal listing={listing} onUpdate={setListing} />,
-                showCancelButton: true
+                showCancelButton: false
               });
             }}
           >
@@ -410,7 +418,7 @@ export default function ListingDetailsScreen() {
                 onPress={() => {
                   useModalStore.getState().showModal({
                     title: "Update Status",
-                    showCancelButton: true,
+                    showCancelButton: false,
                     content: <UpdatePropertyModalContent listing={listing} onUpdate={(updated) => setListing(updated)} />
                   });
                 }}
@@ -451,7 +459,7 @@ export default function ListingDetailsScreen() {
               onPress={() => useModalStore.getState().showModal({
                 title: "Update Basic Info",
                 content: <EditBasicInfoModal listing={listing} onUpdate={setListing} />,
-                showCancelButton: true
+                showCancelButton: false
               })}
               style={styles.sectionEditButton}
             >
@@ -466,7 +474,7 @@ export default function ListingDetailsScreen() {
               <TouchableOpacity onPress={() => useModalStore.getState().showModal({
                 title: "Update Location",
                 content: <EditLocationModal listing={listing} onUpdate={setListing} />,
-                showCancelButton: true
+                showCancelButton: false
               })}>
                 <Ionicons name="pencil" size={18} color={theme.textSecondary} />
               </TouchableOpacity>
@@ -500,7 +508,7 @@ export default function ListingDetailsScreen() {
               <TouchableOpacity onPress={() => useModalStore.getState().showModal({
                 title: "Update Details",
                 content: <EditDetailsModal listing={listing} onUpdate={setListing} />,
-                showCancelButton: true
+                showCancelButton: false
               })}>
                 <Ionicons name="pencil" size={18} color={theme.textSecondary} />
               </TouchableOpacity>
@@ -549,7 +557,7 @@ export default function ListingDetailsScreen() {
                 <TouchableOpacity onPress={() => useModalStore.getState().showModal({
                   title: "Update Details",
                   content: <EditDetailsModal listing={listing} onUpdate={setListing} />,
-                  showCancelButton: true
+                  showCancelButton: false
                 })}>
                   <Ionicons name="pencil" size={18} color={theme.textSecondary} />
                 </TouchableOpacity>
@@ -638,7 +646,7 @@ export default function ListingDetailsScreen() {
             onPress={() => {
               useModalStore.getState().showModal({
                 title: "Delete Property",
-                showCancelButton: true,
+                showCancelButton: false,
                 content: (
                   <DeleteConfirmationModalContent
                     listingTitle={listing.title}
