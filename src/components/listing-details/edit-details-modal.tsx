@@ -7,7 +7,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { AgentService, Listing } from "@/services/agent.service";
 import { useModalStore } from "@/store/modal.store";
 import { Ionicons } from "@expo/vector-icons";
-import { AnimatedSuccessIcon, AnimatedErrorIcon } from "@/components/animated-status-icons";
+import { StatusModal } from "@/components/status-modal";
 
 interface EditDetailsModalProps {
   listing: Listing;
@@ -55,15 +55,11 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedSuccessIcon size={80} />
-            <ThemedText style={styles.resultText}>Details updated successfully.</ThemedText>
-            <ThemedButton
-              title="Close"
-              variant="primary"
-              onPress={() => useModalStore.getState().hideModal()}
-            />
-          </View>
+          <StatusModal
+            status="success"
+            message="Details updated successfully."
+            onClose={() => useModalStore.getState().hideModal()}
+          />
         ),
       });
     } catch (error) {
@@ -71,15 +67,11 @@ export function EditDetailsModal({ listing, onUpdate }: EditDetailsModalProps) {
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedErrorIcon size={80} />
-            <ThemedText style={styles.resultText}>Failed to update details.</ThemedText>
-            <ThemedButton
-              title="Close"
-              variant="outline"
-              onPress={() => useModalStore.getState().hideModal()}
-            />
-          </View>
+          <StatusModal
+            status="error"
+            message="Failed to update details."
+            onClose={() => useModalStore.getState().hideModal()}
+          />
         ),
       });
     } finally {

@@ -9,9 +9,11 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   useColorScheme,
+  View,
 } from "react-native";
 import { ThemedButton } from "./themed-button";
 import { ThemedText } from "./themed-text";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function GlobalModal() {
   const {
@@ -25,6 +27,7 @@ export function GlobalModal() {
   } = useModalStore();
   const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
+  const insets = useSafeAreaInsets();
 
   const [isRendered, setIsRendered] = useState(false);
   const translateY = useRef(new Animated.Value(500)).current; // Start off-screen
@@ -116,6 +119,9 @@ export function GlobalModal() {
                     onPress={handleClose}
                   />
                 )}
+
+                {/* Safe Area Spacer to guarantee bottom clearance */}
+                <View style={{ height: Math.max(insets.bottom, 36) }} />
               </Animated.View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
@@ -136,7 +142,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     padding: Spacing.four,
     maxHeight: "80%",
-    paddingBottom: 80,
   },
   modalTitle: {
     fontSize: 18,

@@ -11,6 +11,7 @@ import {
   AnimatedErrorIcon,
   AnimatedSuccessIcon,
 } from "@/components/animated-status-icons";
+import { StatusModal } from "@/components/status-modal";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -52,30 +53,15 @@ function DeleteConfirmationModalContent({
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedSuccessIcon size={80} />
-            <ThemedText
-              style={{
-                textAlign: "center",
-                marginBottom: Spacing.five,
-                fontSize: 18,
-                fontWeight: "bold",
-              }}
-            >
-              Successfully deleted.
-            </ThemedText>
-            <View style={{ flexDirection: "row" }}>
-              <ThemedButton
-                title="Finish"
-                variant="primary"
-                style={{ flex: 1 }}
-                onPress={() => {
-                  useModalStore.getState().hideModal();
-                  router.back();
-                }}
-              />
-            </View>
-          </View>
+          <StatusModal
+            status="success"
+            message="Successfully deleted."
+            closeText="Finish"
+            onClose={() => {
+              useModalStore.getState().hideModal();
+              router.back();
+            }}
+          />
         ),
       });
     } catch (error) {
@@ -83,33 +69,12 @@ function DeleteConfirmationModalContent({
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedErrorIcon size={80} />
-            <ThemedText
-              style={{
-                textAlign: "center",
-                marginBottom: Spacing.five,
-                fontSize: 18,
-                fontWeight: "bold",
-              }}
-            >
-              Property was not successfully deleted.
-            </ThemedText>
-            <View style={{ flexDirection: "row" }}>
-              <ThemedButton
-                title="Close"
-                variant="outline"
-                style={{ flex: 1, marginRight: Spacing.two }}
-                onPress={() => useModalStore.getState().hideModal()}
-              />
-              <ThemedButton
-                title="Retry"
-                variant="primary"
-                style={{ flex: 1 }}
-                onPress={handleDelete}
-              />
-            </View>
-          </View>
+          <StatusModal
+            status="error"
+            message="Property was not successfully deleted."
+            onClose={() => useModalStore.getState().hideModal()}
+            onRetry={handleDelete}
+          />
         ),
       });
     } finally {
@@ -173,24 +138,11 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedSuccessIcon size={80} />
-            <ThemedText
-              style={{
-                textAlign: "center",
-                marginBottom: Spacing.five,
-                fontSize: 18,
-                fontWeight: "bold",
-              }}
-            >
-              Property updated successfully.
-            </ThemedText>
-            <ThemedButton
-              title="Close"
-              variant="primary"
-              onPress={() => useModalStore.getState().hideModal()}
-            />
-          </View>
+          <StatusModal
+            status="success"
+            message="Property updated successfully."
+            onClose={() => useModalStore.getState().hideModal()}
+          />
         ),
       });
     } catch (error) {
@@ -198,24 +150,11 @@ function UpdatePropertyModalContent({ listing, onUpdate }: { listing: Listing, o
       useModalStore.getState().showModal({
         showCancelButton: false,
         content: (
-          <View style={{ marginTop: Spacing.two }}>
-            <AnimatedErrorIcon size={80} />
-            <ThemedText
-              style={{
-                textAlign: "center",
-                marginBottom: Spacing.five,
-                fontSize: 18,
-                fontWeight: "bold",
-              }}
-            >
-              Failed to update property.
-            </ThemedText>
-            <ThemedButton
-              title="Close"
-              variant="outline"
-              onPress={() => useModalStore.getState().hideModal()}
-            />
-          </View>
+          <StatusModal
+            status="error"
+            message="Failed to update property."
+            onClose={() => useModalStore.getState().hideModal()}
+          />
         ),
       });
     } finally {
