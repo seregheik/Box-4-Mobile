@@ -8,6 +8,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import { BlurView } from "expo-blur";
 import { ThemedButton } from "./themed-button";
 import { ThemedText } from "./themed-text";
 
@@ -41,7 +42,11 @@ export function ThemedModal({
       {...rest}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalOverlay}>
+        <BlurView 
+          intensity={30} 
+          tint={colorScheme === "dark" ? "dark" : "light"} 
+          style={styles.modalOverlay}
+        >
           <TouchableWithoutFeedback>
             <View
               style={[
@@ -65,7 +70,7 @@ export function ThemedModal({
               )}
             </View>
           </TouchableWithoutFeedback>
-        </View>
+        </BlurView>
       </TouchableWithoutFeedback>
     </Modal>
   );
@@ -74,7 +79,7 @@ export function ThemedModal({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.3)", // slightly lighter since blur adds darkening/lightening
     justifyContent: "flex-end",
   },
   modalContent: {
