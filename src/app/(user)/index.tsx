@@ -69,25 +69,37 @@ export default function UserHomeScreen() {
   const nearestProperties = dashboardData?.nearest_properties || [];
   
   const featuredListings: FeaturedProperty[] = nearestProperties
-    .filter(p => p.is_featured || p.is_boosted) // Show featured or boosted as featured
+    .filter(p => p.is_featured || p.is_boosted)
     .map(p => ({
       id: p.id,
       title: p.title,
-      rating: 4.8, // Not provided by API, defaulting
+      rating: 4.8,
+      reviewsCount: p.views_count || 24,
       location: p.address,
       price: Number(p.price).toLocaleString(),
+      priceUnit: '/ month',
       image: p.cover_photo,
       badge: p.category,
       isFavorite: false,
+      bedrooms: p.bedrooms || 2,
+      bathrooms: p.bathrooms || 2,
+      size: p.total_rooms ? p.total_rooms * 100 : 1200,
     }));
 
   const allProperties: Property[] = nearestProperties.map(p => ({
     id: p.id,
     title: p.title,
-    address: p.address,
+    rating: 4.8,
+    reviewsCount: p.views_count || 24,
     location: p.address,
     price: Number(p.price).toLocaleString(),
+    priceUnit: '/ month',
     image: p.cover_photo,
+    badge: p.category,
+    isFavorite: false,
+    bedrooms: p.bedrooms || 2,
+    bathrooms: p.bathrooms || 2,
+    size: p.total_rooms ? p.total_rooms * 100 : 1200,
   }));
 
   const topLocations = dashboardData?.top_locations || [];
