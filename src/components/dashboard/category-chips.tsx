@@ -33,15 +33,17 @@ export function CategoryChips({
           <TouchableOpacity
             key={category}
             onPress={() => onSelect(category)}
-            style={[
-              styles.chip,
-              {
-                backgroundColor: isActive
-                  ? colors.tintBlue
-                  : colors.backgroundElement,
-              },
-            ]}
-          >
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: isActive
+                    ? colors.tintRed
+                    : colors.backgroundElement,
+                  borderColor: isActive ? colors.tintRed : colors.border,
+                  borderWidth: 1,
+                },
+              ]}
+            >
             <ThemedText
               style={[
                 styles.text,
@@ -64,8 +66,8 @@ const styles = StyleSheet.create({
   },
   chip: {
     paddingHorizontal: Spacing.four,
-    paddingVertical: 4,
-    borderRadius: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",
   },

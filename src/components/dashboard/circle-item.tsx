@@ -31,21 +31,23 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: 'transparent',
     padding: 6,
     paddingRight: Spacing.four,
-    borderRadius: 30,
+    borderRadius: 8,
     marginRight: Spacing.three,
+    borderWidth: 1,
+    borderColor: 'rgba(214, 2, 2, 0.15)', // very subtle tintRed border
   },
   horizontalImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 6,
     marginRight: Spacing.two,
   },
   horizontalText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#1E293B',
   },
   verticalContainer: {
@@ -55,12 +57,14 @@ const styles = StyleSheet.create({
   verticalImage: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 8,
     marginBottom: Spacing.one,
+    borderWidth: 1,
+    borderColor: 'rgba(214, 2, 2, 0.2)', // subtle tintRed border
   },
   verticalText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#1E293B',
   },
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 export interface Property {
   id: string;
@@ -25,7 +25,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         <Image source={{ uri: property.image }} style={styles.image} />
         
         <TouchableOpacity style={styles.favoriteBtn}>
-          <Ionicons name="heart-outline" size={16} color="#D60202" />
+          <Ionicons name="heart-outline" size={16} color={Colors.light.tintRed} />
         </TouchableOpacity>
 
         <View style={styles.priceBadge}>
@@ -50,10 +50,12 @@ export function PropertyCard({ property }: PropertyCardProps) {
 const styles = StyleSheet.create({
   container: {
     width: 200,
-    backgroundColor: '#E2E8F0',
-    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
     overflow: 'hidden',
     marginRight: Spacing.three,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   imageContainer: {
     width: '100%',
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -78,10 +80,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     right: 8,
-    backgroundColor: '#D60202',
-    paddingHorizontal: 12,
+    backgroundColor: Colors.light.tintRed,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   priceText: {
     color: '#ffffff',

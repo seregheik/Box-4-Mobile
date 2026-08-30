@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
-import { Spacing } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, View } from "react-native";
 
@@ -72,15 +72,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: width - 32, // Screen width minus horizontal padding
     height: 140,
-    // backgroundColor: "#F8FAFC",
-    borderRadius: 20,
-    padding: Spacing.one,
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    padding: Spacing.two,
     marginRight: Spacing.three,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   imageContainer: {
     width: 120,
     height: "100%",
-    borderRadius: 8,
+    borderRadius: 6,
     overflow: "hidden",
   },
   image: {
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#D60202",
+    backgroundColor: Colors.light.tintRed,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -102,10 +104,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 8,
     left: 8,
-    backgroundColor: "#D60202",
+    backgroundColor: Colors.light.tintRed,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   typeText: {
     color: "#ffffff",
@@ -136,6 +138,6 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: "bold",
-    // color: "#1E293B",
+    color: Colors.light.tintRed,
   },
 });
