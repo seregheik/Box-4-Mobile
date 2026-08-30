@@ -101,7 +101,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
               <Text style={styles.statText}>{property.bathrooms}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="square-outline" size={12} color="#64748B" />
+              <Ionicons name="grid-outline" size={14} color="#64748B" />
               <Text style={styles.statText}>{property.size}</Text>
             </View>
           </View>

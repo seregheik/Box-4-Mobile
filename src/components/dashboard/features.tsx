@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { FeaturedCard, FeaturedProperty } from "./featured-card";
+import { Property, PropertyCard } from "./property-card";
 
 interface FeaturesProps {
-  listings: FeaturedProperty[];
+  listings: Property[];
 }
 
 export function Features({ listings }: FeaturesProps) {
@@ -64,7 +64,7 @@ export function Features({ listings }: FeaturesProps) {
       keyExtractor={(item) => item.id}
       horizontal
       showsHorizontalScrollIndicator={false}
-      renderItem={({ item }) => <FeaturedCard property={item} />}
+      renderItem={({ item }) => <PropertyCard property={item} />}
       contentContainerStyle={styles.listContainer}
       onScrollBeginDrag={() => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);

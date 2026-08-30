@@ -1,7 +1,13 @@
-import { useState, useCallback } from "react";
-import { ScrollView, StyleSheet, View, ActivityIndicator, RefreshControl } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -10,13 +16,12 @@ import { useTheme } from "@/hooks/use-theme";
 
 import { CategoryChips } from "@/components/dashboard/category-chips";
 import { CircleItem } from "@/components/dashboard/circle-item";
-import { FeaturedProperty } from "@/components/dashboard/featured-card";
 import { Features } from "@/components/dashboard/features";
 import { Property, PropertyCard } from "@/components/dashboard/property-card";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { UserHeader } from "@/components/dashboard/user-header";
-import { UserService, DashboardResponse } from "@/services/user.service";
+import { DashboardResponse, UserService } from "@/services/user.service";
 import { useAuthStore } from "@/store/auth.store";
 
 const CATEGORIES = ["All", "Luxury", "Residential", "Commercial"];
@@ -25,18 +30,20 @@ export default function UserHomeScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [activeCategory, setActiveCategory] = useState("All");
-  
-  const { full_name } = useAuthStore();
-  const firstName = full_name?.split(' ')[0] || "User";
 
-  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+  const { full_name } = useAuthStore();
+  const firstName = full_name?.split(" ")[0] || "User";
+
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       fetchDashboard();
-    }, [])
+    }, []),
   );
 
   const fetchDashboard = async () => {
@@ -67,39 +74,39 @@ export default function UserHomeScreen() {
 
   // Fallback to empty if no data
   const nearestProperties = dashboardData?.nearest_properties || [];
-  
-  const featuredListings: FeaturedProperty[] = nearestProperties
-    .filter(p => p.is_featured || p.is_boosted)
-    .map(p => ({
+
+  const featuredListings: Property[] = nearestProperties
+    .filter((p) => p.is_featured || p.is_boosted)
+    .map((p) => ({
       id: p.id,
       title: p.title,
       rating: 4.8,
-      reviewsCount: p.views_count || 24,
+      reviewsCount: p.views_count || 0,
       location: p.address,
       price: Number(p.price).toLocaleString(),
-      priceUnit: '/ month',
+      priceUnit: "/ month",
       image: p.cover_photo,
       badge: p.category,
       isFavorite: false,
-      bedrooms: p.bedrooms || 2,
-      bathrooms: p.bathrooms || 2,
-      size: p.total_rooms ? p.total_rooms * 100 : 1200,
+      bedrooms: p.bedrooms || 0,
+      bathrooms: p.bathrooms || 0,
+      size: p.total_rooms || 0,
     }));
 
-  const allProperties: Property[] = nearestProperties.map(p => ({
+  const allProperties: Property[] = nearestProperties.map((p) => ({
     id: p.id,
     title: p.title,
     rating: 4.8,
-    reviewsCount: p.views_count || 24,
+    reviewsCount: p.views_count || 0,
     location: p.address,
     price: Number(p.price).toLocaleString(),
-    priceUnit: '/ month',
+    priceUnit: "/ month",
     image: p.cover_photo,
     badge: p.category,
     isFavorite: false,
-    bedrooms: p.bedrooms || 2,
-    bathrooms: p.bathrooms || 2,
-    size: p.total_rooms ? p.total_rooms * 100 : 1200,
+    bedrooms: p.bedrooms || 0,
+    bathrooms: p.bathrooms || 0,
+    size: p.total_rooms || 0,
   }));
 
   const topLocations = dashboardData?.top_locations || [];
@@ -114,7 +121,12 @@ export default function UserHomeScreen() {
           { paddingBottom: insets.bottom + 80 },
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.tintRed} colors={[theme.tintRed]} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.tintRed}
+            colors={[theme.tintRed]}
+          />
         }
       >
         <UserHeader />
@@ -211,8 +223,8 @@ export default function UserHomeScreen() {
 const styles = StyleSheet.create({
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     flex: 1,
