@@ -1,147 +1,90 @@
-import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useState, useCallback } from "react";
+import { ScrollView, StyleSheet, View, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 
-import { AdBanner } from "@/components/dashboard/ad-banner";
 import { CategoryChips } from "@/components/dashboard/category-chips";
 import { CircleItem } from "@/components/dashboard/circle-item";
-import {
-  FeaturedProperty
-} from "@/components/dashboard/featured-card";
+import { FeaturedProperty } from "@/components/dashboard/featured-card";
 import { Features } from "@/components/dashboard/features";
 import { Property, PropertyCard } from "@/components/dashboard/property-card";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { UserHeader } from "@/components/dashboard/user-header";
+import { UserService, DashboardResponse } from "@/services/user.service";
+import { useAuthStore } from "@/store/auth.store";
 
 const CATEGORIES = ["All", "Luxury", "Residential", "Commercial"];
 
-const FEATURED_LISTINGS: FeaturedProperty[] = [
-  {
-    id: "1",
-    title: "Sky Dandelions Apartment",
-    rating: 4.9,
-    location: "Lekki, Lagos",
-    price: "23,00000",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
-    isFavorite: false,
-  },
-  {
-    id: "2",
-    title: "Sky Dandelions Apartment",
-    rating: 4.2,
-    location: "Lekki, Lagos",
-    price: "23,00000",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400",
-    badge: "Villa",
-    isFavorite: true,
-  },
-  {
-    id: "3",
-    title: "Sky Dandelions Apartment",
-    rating: 4.9,
-    location: "Lekki, Lagos",
-    price: "23,00000",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
-    isFavorite: false,
-  },
-  {
-    id: "4",
-    title: "Sky Dandelions Apartment",
-    rating: 4.2,
-    location: "Lekki, Lagos",
-    price: "23,00000",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400",
-    badge: "Villa",
-    isFavorite: true,
-  },
-];
-
-const ADS = [
-  {
-    id: "1",
-    title: "This is an Ad\nFor a client",
-    subtitle: "Curated list of best value for money",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600",
-  },
-  {
-    id: "2",
-    title: "This is an Ad\nFor a client",
-    subtitle: "Curated list of best value for money",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600",
-  },
-];
-
-const PROPERTIES: Property[] = [
-  {
-    id: "1",
-    title: "4Bedroom apartment",
-    address: "No 2 Ikorodu street, lagos",
-    location: "Ikorodu, Lagos",
-    price: "10,00000",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400",
-  },
-  {
-    id: "2",
-    title: "3Bedroom bungalow",
-    address: "45 Adeola Odeku, Victoria Island",
-    location: "Victoria Island, Lagos",
-    price: "8,50000",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400",
-  },
-];
-
-const NEARBY_PROPERTIES: Property[] = [
-  {
-    id: "3",
-    title: "5Bedroom duplex",
-    address: "78 Lekki Phase 1, Lagos",
-    location: "Lekki, Lagos",
-    price: "15,00000",
-    image: "https://images.unsplash.com/photo-1600607687931-cebf667114e2?w=400",
-  },
-  {
-    id: "4",
-    title: "1Bedroom studio",
-    address: "3 Ahmadu Bello Way, Kaduna",
-    location: "Kaduna",
-    price: "3,00000",
-    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400",
-  },
-];
-
-const TOP_LOCATIONS = [
-  {
-    id: "1",
-    name: "Benin",
-    image: "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=100",
-  },
-  {
-    id: "2",
-    name: "Abuja",
-    image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=100",
-  },
-  {
-    id: "3",
-    name: "Ibadan",
-    image: "https://images.unsplash.com/photo-1543324021-0811e54e4fdb?w=100",
-  },
-];
-
-const TOP_AGENTS = [
-  { id: "1", name: "Amanda", image: "https://i.pravatar.cc/150?img=47" },
-  { id: "2", name: "Anderson", image: "https://i.pravatar.cc/150?img=11" },
-  { id: "3", name: "Samantha", image: "https://i.pravatar.cc/150?img=5" },
-  { id: "4", name: "Andrew", image: "https://i.pravatar.cc/150?img=12" },
-];
-
 export default function UserHomeScreen() {
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
   const [activeCategory, setActiveCategory] = useState("All");
+  
+  const { full_name } = useAuthStore();
+  const firstName = full_name?.split(' ')[0] || "User";
+
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDashboard();
+    }, [])
+  );
+
+  const fetchDashboard = async () => {
+    try {
+      if (!dashboardData) setIsLoading(true);
+      const data = await UserService.getBuyerDashboard();
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to fetch dashboard:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading && !dashboardData) {
+    return (
+      <ThemedView style={[styles.centerContainer, { paddingTop: insets.top }]}>
+        <ActivityIndicator size="large" color={theme.tintRed} />
+      </ThemedView>
+    );
+  }
+
+  // Fallback to empty if no data
+  const nearestProperties = dashboardData?.nearest_properties || [];
+  
+  const featuredListings: FeaturedProperty[] = nearestProperties
+    .filter(p => p.is_featured || p.is_boosted) // Show featured or boosted as featured
+    .map(p => ({
+      id: p.id,
+      title: p.title,
+      rating: 4.8, // Not provided by API, defaulting
+      location: p.address,
+      price: Number(p.price).toLocaleString(),
+      image: p.cover_photo,
+      badge: p.category,
+      isFavorite: false,
+    }));
+
+  const allProperties: Property[] = nearestProperties.map(p => ({
+    id: p.id,
+    title: p.title,
+    address: p.address,
+    location: p.address,
+    price: Number(p.price).toLocaleString(),
+    image: p.cover_photo,
+  }));
+
+  const topLocations = dashboardData?.top_locations || [];
+  const topAgents = dashboardData?.top_agents || [];
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -156,7 +99,7 @@ export default function UserHomeScreen() {
 
         <View style={styles.greetingSection}>
           <ThemedText style={styles.greetingText}>
-            Hey, <ThemedText style={styles.nameText}>Jonathan!</ThemedText>
+            Hey, <ThemedText style={styles.nameText}>{firstName}!</ThemedText>
           </ThemedText>
           <ThemedText style={styles.subGreetingText}>
             Let's start exploring
@@ -172,89 +115,83 @@ export default function UserHomeScreen() {
         />
 
         {/* Featured Listings */}
-        <SectionHeader title="Featured Listings" actionText="view all" />
-        <View style={styles.horizontalList}>
-          <Features listings={FEATURED_LISTINGS} />
-        </View>
-
-        {/* Ads */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={[styles.horizontalList, { marginTop: Spacing.four }]}
-        >
-          {ADS.map((item) => (
-            <AdBanner
-              key={item.id}
-              title={item.title}
-              subtitle={item.subtitle}
-              image={item.image}
-            />
-          ))}
-        </ScrollView>
+        {featuredListings.length > 0 && (
+          <>
+            <SectionHeader title="Featured Listings" actionText="view all" />
+            <View style={styles.horizontalList}>
+              <Features listings={featuredListings} />
+            </View>
+          </>
+        )}
 
         {/* Properties */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={[styles.horizontalList, { marginTop: Spacing.four }]}
-        >
-          {PROPERTIES.map((item) => (
-            <PropertyCard key={item.id} property={item} />
-          ))}
-        </ScrollView>
+        {allProperties.length > 0 && (
+          <>
+            <SectionHeader title="All Properties" actionText="view all" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={[styles.horizontalList, { marginTop: Spacing.four }]}
+            >
+              {allProperties.map((item) => (
+                <PropertyCard key={item.id} property={item} />
+              ))}
+            </ScrollView>
+          </>
+        )}
 
         {/* Top Locations */}
-        <SectionHeader title="Top Locations" actionText="Explore" />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalList}
-        >
-          {TOP_LOCATIONS.map((item) => (
-            <CircleItem
-              key={item.id}
-              variant="horizontal"
-              name={item.name}
-              image={item.image}
-            />
-          ))}
-        </ScrollView>
+        {topLocations.length > 0 && (
+          <>
+            <SectionHeader title="Top Locations" actionText="Explore" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.horizontalList}
+            >
+              {topLocations.map((item, index) => (
+                <CircleItem
+                  key={index.toString()}
+                  variant="horizontal"
+                  name={item.location}
+                  image={item.cover_photo}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
 
         {/* Top Agents */}
-        <SectionHeader title="Top agents" actionText="Explore" />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalList}
-        >
-          {TOP_AGENTS.map((item) => (
-            <CircleItem
-              key={item.id}
-              variant="vertical"
-              name={item.name}
-              image={item.image}
-            />
-          ))}
-        </ScrollView>
-
-        {/* Explore nearby properties */}
-        <SectionHeader title="Explore nearby properties" actionText="Explore" />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalList}
-        >
-          {NEARBY_PROPERTIES.map((item) => (
-            <PropertyCard key={item.id} property={item} />
-          ))}
-        </ScrollView>
+        {topAgents.length > 0 && (
+          <>
+            <SectionHeader title="Top agents" actionText="Explore" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.horizontalList}
+            >
+              {topAgents.map((item) => (
+                <CircleItem
+                  key={item.id}
+                  variant="vertical"
+                  name={item.full_name}
+                  image={item.profile_picture}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
       </ScrollView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     marginHorizontal: -Spacing.three,
