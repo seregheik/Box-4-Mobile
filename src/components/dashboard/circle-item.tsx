@@ -31,13 +31,11 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: '#F8FAFC',
     padding: 6,
     paddingRight: Spacing.four,
     borderRadius: 8,
     marginRight: Spacing.three,
-    borderWidth: 1,
-    borderColor: 'rgba(214, 2, 2, 0.15)', // very subtle tintRed border
   },
   horizontalImage: {
     width: 40,
@@ -59,8 +57,6 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginBottom: Spacing.one,
-    borderWidth: 1,
-    borderColor: 'rgba(214, 2, 2, 0.2)', // subtle tintRed border
   },
   verticalText: {
     fontSize: 12,

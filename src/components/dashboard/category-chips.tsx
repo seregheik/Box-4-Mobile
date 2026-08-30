@@ -39,8 +39,6 @@ export function CategoryChips({
                   backgroundColor: isActive
                     ? colors.tintRed
                     : colors.backgroundElement,
-                  borderColor: isActive ? colors.tintRed : colors.border,
-                  borderWidth: 1,
                 },
               ]}
             >
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 12,
-    fontWeight: "400",
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

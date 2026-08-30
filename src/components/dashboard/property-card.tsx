@@ -50,12 +50,10 @@ export function PropertyCard({ property }: PropertyCardProps) {
 const styles = StyleSheet.create({
   container: {
     width: 200,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     overflow: 'hidden',
     marginRight: Spacing.three,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   imageContainer: {
     width: '100%',
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   detailsContainer: {
@@ -95,13 +93,13 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three,
   },
   title: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#1E293B',
     marginBottom: 4,
   },
   address: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#64748B',
     marginBottom: 6,
   },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface SectionHeaderProps {
   title: string;
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#0495CC', // Using secondary blue for action links
+    color: Colors.light.tintRed,
   },
 });

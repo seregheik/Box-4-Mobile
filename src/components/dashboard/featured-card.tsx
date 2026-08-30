@@ -72,12 +72,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: width - 32, // Screen width minus horizontal padding
     height: 140,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#F8FAFC",
     borderRadius: 8,
     padding: Spacing.two,
     marginRight: Spacing.three,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   imageContainer: {
     width: 120,
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
     paddingLeft: Spacing.three,
   },
   title: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "bold",
     // color: "#1E293B",
     marginBottom: 4,
@@ -132,11 +130,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   infoText: {
-    fontSize: 12,
+    fontSize: 13,
     // color: "#64748B",
   },
   price: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
     color: Colors.light.tintRed,
   },
