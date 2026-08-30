@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ScrollView, StyleSheet, View, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, View, ActivityIndicator, RefreshControl } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "expo-router";
 
@@ -31,6 +31,7 @@ export default function UserHomeScreen() {
 
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -40,7 +41,7 @@ export default function UserHomeScreen() {
 
   const fetchDashboard = async () => {
     try {
-      if (!dashboardData) setIsLoading(true);
+      if (!dashboardData && !refreshing) setIsLoading(true);
       const data = await UserService.getBuyerDashboard();
       setDashboardData(data);
     } catch (error) {
@@ -49,6 +50,12 @@ export default function UserHomeScreen() {
       setIsLoading(false);
     }
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchDashboard();
+    setRefreshing(false);
+  }, []);
 
   if (isLoading && !dashboardData) {
     return (
@@ -94,6 +101,9 @@ export default function UserHomeScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 80 },
         ]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.tintRed} colors={[theme.tintRed]} />
+        }
       >
         <UserHeader />
 
