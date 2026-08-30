@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
 
 export interface Property {
@@ -22,25 +21,29 @@ export function PropertyCard({ property }: PropertyCardProps) {
     <View style={styles.container}>
       {/* Image Section */}
       <View style={styles.imageContainer}>
-        <Image source={{ uri: property.image }} style={styles.image} />
+        <Image 
+          source={{ uri: property.image }} 
+          style={styles.image} 
+          defaultSource={{ uri: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400' }}
+        />
         
         <TouchableOpacity style={styles.favoriteBtn}>
           <Ionicons name="heart-outline" size={16} color={Colors.light.tintRed} />
         </TouchableOpacity>
 
         <View style={styles.priceBadge}>
-          <ThemedText style={styles.priceText}>N {property.price}</ThemedText>
+          <Text style={styles.priceText}>N {property.price}</Text>
         </View>
       </View>
 
       {/* Details Section */}
       <View style={styles.detailsContainer}>
-        <ThemedText style={styles.title} numberOfLines={1}>{property.title}</ThemedText>
-        <ThemedText style={styles.address} numberOfLines={1}>{property.address}</ThemedText>
+        <Text style={styles.title} numberOfLines={1}>{property.title}</Text>
+        <Text style={styles.address} numberOfLines={1}>{property.address}</Text>
         
         <View style={styles.locationRow}>
           <Ionicons name="location-sharp" size={12} color="#64748B" />
-          <ThemedText style={styles.locationText} numberOfLines={1}>{property.location}</ThemedText>
+          <Text style={styles.locationText} numberOfLines={1}>{property.location}</Text>
         </View>
       </View>
     </View>
@@ -49,11 +52,11 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 200,
+    width: 220, // Match FeaturedCard for consistency
     backgroundColor: '#F8FAFC',
     borderRadius: 8,
-    overflow: 'hidden',
     marginRight: Spacing.three,
+    overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',
