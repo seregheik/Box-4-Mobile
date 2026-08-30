@@ -189,6 +189,7 @@ export default function UserHomeScreen() {
                   variant="horizontal"
                   name={item.location}
                   image={item.cover_photo}
+                  subtitle="$200,000 avg"
                 />
               ))}
             </ScrollView>
@@ -210,6 +211,7 @@ export default function UserHomeScreen() {
                   variant="vertical"
                   name={item.full_name}
                   image={item.profile_picture}
+                  subtitle="4.0"
                 />
               ))}
             </ScrollView>
@@ -235,21 +237,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
   },
   greetingSection: {
-    marginTop: Spacing.two,
-    marginBottom: Spacing.one,
+    marginTop: Spacing.three,
+    marginBottom: Spacing.two,
   },
   greetingText: {
-    fontSize: 20,
-    // color: "#1E293B",
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#1E293B",
   },
   nameText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#D60202",
   },
   subGreetingText: {
-    fontSize: 20,
-    // color: "#1E293B",
+    fontSize: 14,
+    color: "#64748B",
+    marginTop: 4,
   },
   horizontalList: {
     // marginHorizontal: Spacing.one,

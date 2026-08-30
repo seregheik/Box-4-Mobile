@@ -65,6 +65,17 @@ export function PropertyCard({ property }: PropertyCardProps) {
             color={property.isFavorite ? Colors.light.tintRed : "#1E293B"}
           />
         </View>
+
+        {property.reviewsCount !== undefined && (
+          <View style={styles.viewsBadge}>
+            <Ionicons name="eye" size={10} color="#ffffff" />
+            <Text style={styles.viewsText}>
+              {property.reviewsCount > 999 
+                ? (property.reviewsCount / 1000).toFixed(0) + 'k' 
+                : property.reviewsCount}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Bottom Details Section */}
@@ -157,6 +168,23 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1,
     borderColor: "#E5E7EB",
+  },
+  viewsBadge: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 2,
+  },
+  viewsText: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   detailsContainer: {
     padding: 12,

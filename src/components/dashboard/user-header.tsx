@@ -13,9 +13,9 @@ export function UserHeader() {
     <View style={styles.container}>
       {/* Location Picker */}
       <TouchableOpacity style={styles.locationBadge}>
-        <Ionicons name="location-sharp" size={14} color="#1E293B" />
-        <ThemedText style={styles.locationText}>Lugbe, Abuja</ThemedText>
-        <Ionicons name="chevron-down" size={14} color="#1E293B" />
+        <Ionicons name="location-sharp" size={14} color="#64748B" />
+        <ThemedText style={styles.locationText}>Benin City, Edo</ThemedText>
+        <Ionicons name="chevron-down" size={14} color="#64748B" />
       </TouchableOpacity>
 
       {/* Right Side Actions */}
@@ -50,49 +50,34 @@ const styles = StyleSheet.create({
   locationBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-    borderRadius: 20,
     gap: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
   },
   locationText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "500",
-    color: "#1E293B",
+    color: "#64748B",
   },
   rightActions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.three,
+    gap: Spacing.four,
   },
   notificationBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#ffffff",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#0495CC",
   },
   notificationDot: {
     position: "absolute",
-    top: 10,
-    right: 12,
+    top: 0,
+    right: 2,
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: "#D60202",
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
 });

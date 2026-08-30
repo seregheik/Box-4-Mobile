@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SectionHeaderProps {
   title: string;
@@ -16,7 +17,7 @@ export function SectionHeader({ title, actionText, onAction }: SectionHeaderProp
       
       {actionText && (
         <TouchableOpacity onPress={onAction}>
-          <ThemedText style={styles.actionText}>{actionText}</ThemedText>
+          <Ionicons name="arrow-forward" size={20} color="#D60202" />
         </TouchableOpacity>
       )}
     </View>

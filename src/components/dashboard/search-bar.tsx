@@ -10,7 +10,7 @@ export function SearchBar() {
       
       <TextInput 
         style={styles.input}
-        placeholder="What are you looking for"
+        placeholder="What are you looking for?"
         placeholderTextColor="#94A3B8"
       />
       
@@ -28,15 +28,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderRadius: 12,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     paddingHorizontal: Spacing.three,
-    height: 50,
+    height: 44,
     marginVertical: Spacing.three,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
   },
   searchIcon: {
     marginRight: Spacing.two,

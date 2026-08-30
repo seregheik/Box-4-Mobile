@@ -33,19 +33,18 @@ export function CategoryChips({
           <TouchableOpacity
             key={category}
             onPress={() => onSelect(category)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: isActive
-                    ? colors.tintRed
-                    : colors.backgroundElement,
-                },
-              ]}
-            >
+            style={[
+              styles.chip,
+              {
+                backgroundColor: isActive ? "#D60202" : "#ffffff",
+                borderColor: isActive ? "#D60202" : "#E5E7EB",
+              },
+            ]}
+          >
             <ThemedText
               style={[
                 styles.text,
-                { color: isActive ? "#ffffff" : colors.text },
+                { color: isActive ? "#ffffff" : "#64748B" },
               ]}
             >
               {category}
@@ -60,17 +59,18 @@ export function CategoryChips({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: Spacing.two,
-    gap: Spacing.one,
+    gap: Spacing.two,
   },
   chip: {
-    paddingHorizontal: Spacing.four,
-    paddingVertical: 6,
-    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 2,
+    borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   text: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });
