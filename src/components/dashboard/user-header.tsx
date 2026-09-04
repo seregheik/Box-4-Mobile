@@ -29,7 +29,7 @@ export function UserHeader() {
         </TouchableOpacity>
 
         {/* User Avatar */}
-        <TouchableOpacity onPress={() => router.push("/profile")}>
+        <TouchableOpacity onPress={() => router.push("/(user)/profile")}>
           <Image
             source={{ uri: "https://i.pravatar.cc/150?img=11" }}
             style={styles.avatar}
