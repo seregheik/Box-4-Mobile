@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing } from '@/constants/theme';
+import { UserService } from '@/services/user.service';
 
 export interface Property {
   id: string;
@@ -13,7 +14,7 @@ export interface Property {
   priceUnit?: string;
   image: string;
   badge?: string;
-  isFavorite?: boolean;
+  isSaved?: boolean;
   bedrooms: number;
   bathrooms: number;
   size: number;
@@ -42,6 +43,18 @@ function renderStars(rating: number) {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
+  const [isSaved, setIsSaved] = useState(property.isSaved || false);
+
+  const toggleSaved = async () => {
+    setIsSaved(!isSaved); // Optimistic UI update
+    try {
+      await UserService.toggleSavedProperty(property.id);
+    } catch (error) {
+      console.error('Failed to toggle saved property:', error);
+      setIsSaved(isSaved); // Revert on failure
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Top Image Section */}
@@ -58,13 +71,13 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </View>
         )}
 
-        <View style={styles.favoriteBadge}>
+        <TouchableOpacity style={styles.favoriteBadge} onPress={toggleSaved}>
           <Ionicons
-            name={property.isFavorite ? "heart" : "heart-outline"}
+            name={isSaved ? "heart" : "heart-outline"}
             size={18}
-            color={property.isFavorite ? Colors.light.tintRed : "#1E293B"}
+            color={isSaved ? Colors.light.tintRed : "#1E293B"}
           />
-        </View>
+        </TouchableOpacity>
 
         {property.reviewsCount !== undefined && (
           <View style={styles.viewsBadge}>

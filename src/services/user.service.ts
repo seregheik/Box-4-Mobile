@@ -1,10 +1,10 @@
-import { apiClient } from '@/api/client';
+import { apiClient } from "@/api/client";
 
 export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  role: 'agent' | 'buyer';
+  role: "agent" | "buyer";
 }
 
 export interface BuyerProfile {
@@ -99,20 +99,27 @@ export interface DashboardResponse {
 
 export const UserService = {
   getBuyerProfile: async (): Promise<BuyerProfile> => {
-    const response = await apiClient.get('/buyers/profile/');
+    const response = await apiClient.get("/buyers/profile/");
     return response.data;
   },
-  
-  updateBuyerProfile: async (data: Partial<BuyerProfile>): Promise<BuyerProfile> => {
-    const response = await apiClient.patch('/buyers/profile/', data);
+
+  updateBuyerProfile: async (
+    data: Partial<BuyerProfile>,
+  ): Promise<BuyerProfile> => {
+    const response = await apiClient.patch("/buyers/profile/", data);
     return response.data;
   },
-  
+
   getBuyerDashboard: async (): Promise<DashboardResponse> => {
-    const response = await apiClient.get('/buyers/dashboard/');
+    const response = await apiClient.get("/buyers/dashboard/");
     return response.data;
   },
-  
+
+  toggleSavedProperty: async (id: string): Promise<any> => {
+    const response = await apiClient.patch(`/buyers/saved/${id}/`);
+    return response.data;
+  },
+
   /**
    * Example endpoint to fetch a specific user's profile
    */
@@ -124,7 +131,10 @@ export const UserService = {
   /**
    * Example endpoint to update a user's profile
    */
-  updateProfile: async (userId: string, data: Partial<UserProfile>): Promise<UserProfile> => {
+  updateProfile: async (
+    userId: string,
+    data: Partial<UserProfile>,
+  ): Promise<UserProfile> => {
     const response = await apiClient.patch(`/users/${userId}`, data);
     return response.data;
   },
