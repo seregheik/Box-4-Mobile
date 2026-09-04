@@ -22,8 +22,10 @@ export default function RootLayout() {
     }
   }, [themePreference]);
 
+  const effectiveTheme = themePreference || colorScheme;
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={effectiveTheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <AnimatedSplashOverlay />
         <Slot />
