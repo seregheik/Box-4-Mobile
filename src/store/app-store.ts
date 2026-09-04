@@ -1,13 +1,34 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import * as SecureStore from 'expo-secure-store';
+import { ColorSchemeName } from 'react-native';
 
 interface AppState {
-  isDarkMode: boolean;
-  setDarkMode: (isDark: boolean) => void;
-  // Add other global state here
-  // e.g., notifications, cached data that doesn't belong to a specific context
+  themePreference: ColorSchemeName;
+  setThemePreference: (theme: ColorSchemeName) => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  isDarkMode: false,
-  setDarkMode: (isDark) => set({ isDarkMode: isDark }),
-}));
+const secureStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    return await SecureStore.getItemAsync(name);
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await SecureStore.setItemAsync(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await SecureStore.deleteItemAsync(name);
+  },
+};
+
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      themePreference: 'light',
+      setThemePreference: (theme) => set({ themePreference: theme }),
+    }),
+    {
+      name: 'app-storage',
+      storage: createJSONStorage(() => secureStorage),
+    }
+  )
+);

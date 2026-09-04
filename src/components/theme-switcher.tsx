@@ -1,15 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Appearance, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
+import { TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 
 import { useTheme } from '@/hooks/use-theme';
+import { useAppStore } from '@/store/app-store';
 
 export function ThemeSwitcher() {
   const colorScheme = useColorScheme();
   const theme = useTheme();
+  const setThemePreference = useAppStore((state) => state.setThemePreference);
   
   const toggleTheme = () => {
     const newTheme = colorScheme === 'dark' ? 'light' : 'dark';
-    Appearance.setColorScheme(newTheme);
+    setThemePreference(newTheme);
   };
 
   return (
