@@ -6,18 +6,21 @@ import { useAppStore } from '@/store/app-store';
 
 export function ThemeSwitcher() {
   const colorScheme = useColorScheme();
-  const theme = useTheme();
+  const themePreference = useAppStore((state) => state.themePreference);
   const setThemePreference = useAppStore((state) => state.setThemePreference);
+  const theme = useTheme();
+  
+  const effectiveTheme = themePreference || colorScheme;
   
   const toggleTheme = () => {
-    const newTheme = colorScheme === 'dark' ? 'light' : 'dark';
+    const newTheme = effectiveTheme === 'dark' ? 'light' : 'dark';
     setThemePreference(newTheme);
   };
 
   return (
     <TouchableOpacity onPress={toggleTheme} style={[styles.button, { backgroundColor: theme.background, borderColor: theme.backgroundSelected }]}>
       <Ionicons 
-        name={colorScheme === 'dark' ? 'sunny' : 'moon'} 
+        name={effectiveTheme === 'dark' ? 'sunny' : 'moon'} 
         size={20} 
         color={theme.text} 
       />
