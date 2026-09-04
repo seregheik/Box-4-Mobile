@@ -90,8 +90,9 @@ export default function ProfileScreen() {
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
-        {/* Header Section */}
-        <View style={styles.header}>
+        {/* Top Header Row */}
+        <View style={styles.topHeaderRow}>
+          <ThemedText style={styles.pageTitle}>Profile</ThemedText>
           <TouchableOpacity 
             style={styles.editButton}
             onPress={() => router.push({
@@ -99,15 +100,18 @@ export default function ProfileScreen() {
               params: { profileData: JSON.stringify(profile) }
             })}
           >
-            <ThemedText style={{ color: theme.tintRed, fontWeight: 'bold' }}>Edit Profile</ThemedText>
+            <ThemedText style={styles.editButtonText}>Edit Profile</ThemedText>
           </TouchableOpacity>
+        </View>
 
+        {/* Profile Info Section */}
+        <View style={styles.header}>
           <View style={styles.profileImageContainer}>
             {profile.profile_picture ? (
               <Image source={{ uri: profile.profile_picture }} style={styles.profileImage} />
             ) : (
-              <View style={[styles.profileImagePlaceholder, { backgroundColor: theme.backgroundElement }]}>
-                <Ionicons name="person" size={40} color={theme.textSecondary} />
+              <View style={styles.profileImagePlaceholder}>
+                <Ionicons name="person" size={40} color="#94A3B8" />
               </View>
             )}
           </View>
@@ -115,7 +119,7 @@ export default function ProfileScreen() {
           <ThemedText style={styles.nameText}>
             {profile.full_name || profile.user.full_name || "No Name"}
           </ThemedText>
-          <ThemedText style={styles.emailText} themeColor="textSecondary">
+          <ThemedText style={styles.emailText}>
             {profile.user.email}
           </ThemedText>
         </View>
@@ -154,13 +158,13 @@ export default function ProfileScreen() {
         <View style={styles.infoSection}>
           <ThemedText style={styles.sectionTitle}>Personal Information</ThemedText>
           
-          <View style={[styles.infoCard, { backgroundColor: theme.backgroundElement }]}>
+          <View style={styles.infoCard}>
             <View style={styles.infoRow}>
               <View style={styles.infoIconContainer}>
-                <Ionicons name="call-outline" size={20} color={theme.text} />
+                <Ionicons name="call" size={16} color="#64748B" />
               </View>
               <View style={styles.infoTextContainer}>
-                <ThemedText style={styles.infoLabel} themeColor="textSecondary">Phone Number</ThemedText>
+                <ThemedText style={styles.infoLabel}>PHONE NUMBER</ThemedText>
                 <ThemedText style={styles.infoValue}>{profile.phone_number || 'Not provided'}</ThemedText>
               </View>
             </View>
@@ -169,10 +173,10 @@ export default function ProfileScreen() {
             
             <View style={styles.infoRow}>
               <View style={styles.infoIconContainer}>
-                <Ionicons name="location-outline" size={20} color={theme.text} />
+                <Ionicons name="location-sharp" size={16} color="#64748B" />
               </View>
               <View style={styles.infoTextContainer}>
-                <ThemedText style={styles.infoLabel} themeColor="textSecondary">Location</ThemedText>
+                <ThemedText style={styles.infoLabel}>LOCATION</ThemedText>
                 <ThemedText style={styles.infoValue}>{locationString || 'Not provided'}</ThemedText>
               </View>
             </View>
@@ -181,10 +185,10 @@ export default function ProfileScreen() {
 
             <View style={styles.infoRow}>
               <View style={styles.infoIconContainer}>
-                <Ionicons name="information-circle-outline" size={20} color={theme.text} />
+                <Ionicons name="information-circle" size={16} color="#64748B" />
               </View>
               <View style={styles.infoTextContainer}>
-                <ThemedText style={styles.infoLabel} themeColor="textSecondary">Bio</ThemedText>
+                <ThemedText style={styles.infoLabel}>BIO</ThemedText>
                 <ThemedText style={styles.infoValue}>{profile.bio || 'Not provided'}</ThemedText>
               </View>
             </View>
@@ -195,13 +199,13 @@ export default function ProfileScreen() {
         <View style={styles.actionsSection}>
           <ThemedText style={styles.sectionTitle}>Account</ThemedText>
           
-          <View style={[styles.actionCard, { backgroundColor: theme.backgroundElement }]}>
+          <View style={styles.actionCard}>
             <TouchableOpacity style={styles.actionRow} onPress={handleLogout}>
-              <View style={[styles.actionIconContainer, { backgroundColor: 'rgba(229, 32, 32, 0.1)' }]}>
-                <Ionicons name="log-out-outline" size={20} color={Colors.light.tintRed} />
+              <View style={styles.actionIconContainer}>
+                <Ionicons name="log-out-outline" size={20} color="#D60202" />
               </View>
-              <ThemedText style={[styles.actionText, { color: Colors.light.tintRed }]}>Log Out</ThemedText>
-              <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+              <ThemedText style={styles.actionText}>Log Out</ThemedText>
+              <Ionicons name="chevron-forward" size={18} color="#D60202" />
             </TouchableOpacity>
           </View>
         </View>
@@ -227,10 +231,36 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: Spacing.six,
-    marginTop: Spacing.two,
+  },
+  topHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.six,
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E293B',
+  },
+  editButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(214, 2, 2, 0.05)',
+    borderRadius: 4,
+  },
+  editButtonText: {
+    color: '#D60202',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
   profileImageContainer: {
     marginBottom: Spacing.three,
+    padding: 4,
+    borderRadius: 60,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#ffffff',
   },
   profileImage: {
     width: 100,
@@ -241,38 +271,47 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: '#F3F4F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   nameText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: '#1E293B',
   },
   emailText: {
-    fontSize: 16,
+    fontSize: 14,
+    color: '#94A3B8',
   },
   infoSection: {
     marginBottom: Spacing.six,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: Spacing.three,
+    color: '#1E293B',
   },
   infoCard: {
-    borderRadius: 16,
-    padding: Spacing.four,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 2,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: Spacing.four,
   },
   infoIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(128,128,128,0.1)',
+    width: 36,
+    height: 36,
+    borderRadius: 2,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.three,
@@ -281,25 +320,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoLabel: {
-    fontSize: 13,
-    marginBottom: 2,
+    fontSize: 10,
+    color: '#94A3B8',
+    marginBottom: 4,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   infoValue: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1E293B',
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(128,128,128,0.2)',
-    marginVertical: Spacing.three,
-    marginLeft: 52, // Align with text
+    backgroundColor: '#E5E7EB',
+    width: '100%',
   },
   actionsSection: {
     marginBottom: Spacing.four,
   },
   actionCard: {
-    borderRadius: 16,
-    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 2,
   },
   actionRow: {
     flexDirection: 'row',
@@ -307,23 +351,21 @@ const styles = StyleSheet.create({
     padding: Spacing.four,
   },
   actionIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 2,
+    backgroundColor: 'rgba(214, 2, 2, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(214, 2, 2, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.three,
   },
   actionText: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  editButton: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    padding: Spacing.two,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#D60202',
   },
   completionBanner: {
     borderRadius: 16,
