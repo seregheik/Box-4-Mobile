@@ -38,7 +38,8 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginEndpoint = error.config?.url?.includes("/auth/login");
+    if (error.response?.status === 401 && !isLoginEndpoint) {
       // Handle unauthorized errors globally (e.g., clear token, logout user)
       console.log(
         "Unauthorized! Clearing caches and redirecting to login.",

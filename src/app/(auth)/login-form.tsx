@@ -54,7 +54,6 @@ export default function LoginFormScreen() {
         router.replace("/(user)");
       }
     } catch (error: any) {
-      console.error("Login failed:", error);
       if (error?.response?.status === 400 && error?.response?.data) {
         const data = error.response.data;
         if (data.detail) {
@@ -65,7 +64,11 @@ export default function LoginFormScreen() {
           setErrorMessage("Login failed. Please check your credentials.");
         }
       } else if (error?.response?.status === 401) {
-        setErrorMessage("Invalid email or password.");
+        if (error?.response?.data?.detail) {
+          setErrorMessage(error.response.data.detail);
+        } else {
+          setErrorMessage("Invalid email or password.");
+        }
       } else {
         setErrorMessage("An unexpected error occurred. Please try again.");
       }
