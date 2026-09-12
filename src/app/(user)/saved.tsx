@@ -6,7 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { UserService, SavedProperty } from '@/services/user.service';
-import PropertyCard from '@/components/dashboard/property-card';
+import { PropertyCard } from '@/components/dashboard/property-card';
 
 export default function SavedScreen() {
   const [savedProperties, setSavedProperties] = useState<SavedProperty[]>([]);
@@ -51,9 +51,26 @@ export default function SavedScreen() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <PropertyCard property={item.listing_details} />
-            )}
+            renderItem={({ item }) => {
+              const details = item.listing_details;
+              
+              const mappedProperty = {
+                id: details.id,
+                title: details.title,
+                rating: 0,
+                reviewsCount: details.views_count || 0,
+                location: details.city ? `${details.address}, ${details.city}` : details.address,
+                price: details.price,
+                image: details.cover_photo || (details.images?.length > 0 ? details.images[0].image : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'),
+                badge: details.category_name || 'Property',
+                isSaved: true,
+                bedrooms: details.bedrooms || 0,
+                bathrooms: details.bathrooms || 0,
+                size: 0,
+              };
+
+              return <PropertyCard property={mappedProperty} fullWidth />;
+            }}
           />
         )}
       </SafeAreaView>
