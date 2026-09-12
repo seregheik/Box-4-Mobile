@@ -25,7 +25,7 @@ import { UserHeader } from "@/components/dashboard/user-header";
 import { DashboardResponse, UserService } from "@/services/user.service";
 import { useAuthStore } from "@/store/auth.store";
 
-const CATEGORIES = ["All", "Luxury", "Residential", "Commercial"];
+
 
 export default function UserHomeScreen() {
   const router = useRouter();
@@ -35,9 +35,8 @@ export default function UserHomeScreen() {
 
   const { full_name } = useAuthStore();
 
-  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(
-    null,
-  );
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+  const [categories, setCategories] = useState<string[]>(["All"]);
   const dashboardFullName = dashboardData?.user_location?.full_name;
   const firstName = (full_name || dashboardFullName)?.split(" ")[0] || "User";
 
@@ -53,8 +52,14 @@ export default function UserHomeScreen() {
   const fetchDashboard = async () => {
     try {
       if (!dashboardData && !refreshing) setIsLoading(true);
-      const data = await UserService.getBuyerDashboard();
+      const [data, catsData] = await Promise.all([
+        UserService.getBuyerDashboard(),
+        UserService.getCategories()
+      ]);
       setDashboardData(data);
+      if (catsData) {
+        setCategories(["All", ...catsData.map(c => c.name)]);
+      }
     } catch (error) {
       console.error("Failed to fetch dashboard:", error);
     } finally {
@@ -155,9 +160,14 @@ export default function UserHomeScreen() {
         </TouchableOpacity>
 
         <CategoryChips
-          categories={CATEGORIES}
+          categories={categories}
           activeCategory={activeCategory}
-          onSelect={setActiveCategory}
+          onSelect={(cat) => {
+            setActiveCategory(cat);
+            if (cat !== "All") {
+              router.push(`/(user)/search?category=${encodeURIComponent(cat)}`);
+            }
+          }}
         />
 
         {/* Featured Listings */}

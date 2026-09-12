@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface SearchBarProps {
   value?: string;
@@ -11,56 +11,60 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChangeText, onSubmitEditing }: SearchBarProps) {
   return (
-    <View style={styles.container}>
-      <Ionicons name="search" size={20} color="#64748B" style={styles.searchIcon} />
-      
-      <TextInput 
-        style={styles.input}
-        placeholder="What are you looking for?"
-        placeholderTextColor="#94A3B8"
-        value={value}
-        onChangeText={onChangeText}
-        onSubmitEditing={onSubmitEditing}
-        returnKeyType="search"
-      />
-      
-      <View style={styles.divider} />
-
-      <TouchableOpacity style={styles.micButton}>
-        <Ionicons name="mic-outline" size={20} color="#64748B" />
+    <View style={styles.searchRow}>
+      <View style={styles.searchInputContainer}>
+        <Ionicons name="search" size={20} color={Colors.light.tintRed} style={styles.searchIcon} />
+        
+        <TextInput 
+          style={styles.searchInput}
+          placeholder="What are you looking for?"
+          placeholderTextColor="#94A3B8"
+          value={value}
+          onChangeText={onChangeText}
+          onSubmitEditing={onSubmitEditing}
+          returnKeyType="search"
+          editable={false} // Since this is wrapped in a touchable on home screen
+        />
+      </View>
+      <TouchableOpacity style={styles.filterButton}>
+        <Ionicons name="options-outline" size={24} color="#FFF" />
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  searchRow: {
+    flexDirection: 'row',
+    marginBottom: Spacing.three,
+    gap: 12,
+  },
+  searchInputContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 2,
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: Spacing.three,
-    height: 44,
-    marginVertical: Spacing.three,
+    borderColor: Colors.light.tintRed,
+    borderRadius: 4,
+    paddingHorizontal: 12,
+    height: 48,
   },
   searchIcon: {
-    marginRight: Spacing.two,
+    marginRight: 8,
   },
-  input: {
+  searchInput: {
     flex: 1,
     fontSize: 14,
     color: '#1E293B',
     height: '100%',
   },
-  divider: {
-    width: 1,
-    height: 24,
-    backgroundColor: '#E2E8F0',
-    marginHorizontal: Spacing.two,
-  },
-  micButton: {
-    padding: Spacing.one,
+  filterButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: Colors.light.tintRed,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
