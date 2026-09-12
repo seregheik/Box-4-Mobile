@@ -95,6 +95,13 @@ export default function UserLayout() {
           title: "Properties",
         }}
       />
+      <Tabs.Screen
+        name="property/[id]"
+        options={{
+          href: null,
+          title: "Property Details",
+        }}
+      />
     </Tabs>
   );
 }
