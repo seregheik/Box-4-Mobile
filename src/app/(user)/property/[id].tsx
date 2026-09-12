@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator, FlatList, Modal, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -19,6 +19,15 @@ export default function PropertyDetailsScreen() {
   
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const [activeFullScreenIndex, setActiveFullScreenIndex] = useState(0);
+  const fullScreenListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    if (isFullScreen) {
+      setActiveFullScreenIndex(activeImageIndex);
+    }
+  }, [isFullScreen]);
 
   useEffect(() => {
     if (id) {
@@ -277,21 +286,32 @@ export default function PropertyDetailsScreen() {
       </View>
 
       {/* Full Screen Image Modal */}
-      <Modal visible={isFullScreen} transparent={true} animationType="fade">
+      <Modal visible={isFullScreen} transparent={true} animationType="fade" onRequestClose={() => setIsFullScreen(false)}>
         <View style={styles.fullScreenContainer}>
-          <TouchableOpacity 
-            style={[styles.closeButton, { top: Math.max(insets.top, 16) }]} 
-            onPress={() => setIsFullScreen(false)}
-          >
-            <Ionicons name="close" size={28} color="#FFF" />
-          </TouchableOpacity>
+          <View style={[styles.fullScreenHeader, { top: Math.max(insets.top, 16) }]}>
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={() => setIsFullScreen(false)}
+            >
+              <Ionicons name="arrow-back" size={24} color="#FFF" />
+            </TouchableOpacity>
+            <Text style={styles.fullScreenTitle}>{activeFullScreenIndex + 1} of {images.length}</Text>
+            <View style={{ width: 40 }} />
+          </View>
           
           <FlatList
+            ref={fullScreenListRef}
             data={images}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             initialScrollIndex={activeImageIndex}
+            onScroll={(event) => {
+              const slideSize = event.nativeEvent.layoutMeasurement.width;
+              const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+              setActiveFullScreenIndex(index);
+            }}
+            scrollEventThrottle={16}
             getItemLayout={(_, index) => ({
               length: SCREEN_WIDTH,
               offset: SCREEN_WIDTH * index,
@@ -307,6 +327,33 @@ export default function PropertyDetailsScreen() {
               </View>
             )}
           />
+
+          {/* Thumbnails at the bottom */}
+          <View style={[styles.thumbnailContainer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+            <FlatList
+              data={images}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(_, index) => index.toString()}
+              contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity 
+                  onPress={() => {
+                    setActiveFullScreenIndex(index);
+                    fullScreenListRef.current?.scrollToIndex({ index, animated: true });
+                  }}
+                >
+                  <Image 
+                    source={{ uri: item }} 
+                    style={[
+                      styles.thumbnailImage, 
+                      index === activeFullScreenIndex && styles.activeThumbnail
+                    ]} 
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
         </View>
       </Modal>
     </View>
@@ -651,12 +698,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     justifyContent: 'center',
   },
-  closeButton: {
+  fullScreenHeader: {
     position: 'absolute',
+    left: 16,
     right: 16,
     zIndex: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeButton: {
     padding: 8,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 20,
+  },
+  fullScreenTitle: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  thumbnailContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    paddingVertical: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  thumbnailImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  activeThumbnail: {
+    borderColor: Colors.light.tintRed,
   },
 });
