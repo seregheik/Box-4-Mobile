@@ -112,6 +112,16 @@ export default function SearchScreen() {
   };
 
   useEffect(() => {
+    if (params.category !== undefined && params.category !== filterState.category) {
+      setFilterState(s => ({ ...s, category: params.category }));
+    }
+    if (params.q !== undefined && params.q !== searchQuery) {
+      setSearchQuery(params.q);
+      setInputValue(params.q);
+    }
+  }, [params.category, params.q]);
+
+  useEffect(() => {
     // Debounce or trigger fetch when query or filters change
     const timer = setTimeout(() => {
       fetchResults();
