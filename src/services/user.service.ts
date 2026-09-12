@@ -152,6 +152,11 @@ export const UserService = {
     return response.data;
   },
 
+  getPropertyById: async (id: string): Promise<NearestProperty> => {
+    const response = await apiClient.get(`/buyers/properties/${id}/`);
+    return response.data;
+  },
+
   /**
    * Example endpoint to fetch a specific user's profile
    */
