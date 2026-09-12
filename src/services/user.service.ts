@@ -33,6 +33,14 @@ export interface PropertyImage {
   created_at: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface NearestProperty {
   id: string;
   agent: string;
@@ -164,6 +172,11 @@ export const UserService = {
 
   getSavedProperties: async (): Promise<SavedPropertyResponse> => {
     const response = await apiClient.get('/buyers/saved/');
+    return response.data;
+  },
+
+  getCategories: async (): Promise<Category[]> => {
+    const response = await apiClient.get('/buyers/categories/');
     return response.data;
   },
 

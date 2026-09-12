@@ -7,6 +7,7 @@ import { Colors, Spacing } from '@/constants/theme';
 import { ThemedText } from '@/components/themed-text';
 import { UserService } from '@/services/user.service';
 import { Property, PropertyCard } from '@/components/dashboard/property-card';
+import { FilterModal, FilterState } from '@/components/search/filter-modal';
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -20,25 +21,70 @@ export default function SearchScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
 
-  // Mock filters for now based on the design
-  const [filters, setFilters] = useState([
-    { id: 'cat', label: 'Category: House', type: 'category' },
-    { id: 'price', label: 'Min Price: $500', type: 'price' },
-    { id: 'beds', label: 'Beds: 2+', type: 'beds' }
-  ]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filterState, setFilterState] = useState<FilterState>({
+    category: params.category
+  });
+
+  const activeChips = React.useMemo(() => {
+    const chips: { id: string, label: string, type: string }[] = [];
+    if (filterState.category) {
+      chips.push({ id: 'category', label: `Category: ${filterState.category}`, type: 'category' });
+    }
+    if (filterState.minPrice) {
+      chips.push({ id: 'minPrice', label: `Min Price: $${filterState.minPrice}`, type: 'price' });
+    }
+    if (filterState.maxPrice) {
+      chips.push({ id: 'maxPrice', label: `Max Price: $${filterState.maxPrice}`, type: 'price' });
+    }
+    if (filterState.bedrooms) {
+      chips.push({ id: 'bedrooms', label: `Beds: ${filterState.bedrooms}+`, type: 'beds' });
+    }
+    if (filterState.tags) {
+      filterState.tags.forEach(tag => {
+        chips.push({ id: `tag_${tag}`, label: tag, type: 'tag' });
+      });
+    }
+    if (filterState.city) {
+      chips.push({ id: 'city', label: filterState.city, type: 'location' });
+    }
+    if (filterState.proximitySearch) {
+      chips.push({ id: 'proximity', label: `Within ${filterState.radiusKm}km`, type: 'proximity' });
+    }
+    return chips;
+  }, [filterState]);
 
   const removeFilter = (id: string) => {
-    setFilters(filters.filter(f => f.id !== id));
+    if (id === 'category') setFilterState(s => ({ ...s, category: undefined }));
+    else if (id === 'minPrice') setFilterState(s => ({ ...s, minPrice: undefined }));
+    else if (id === 'maxPrice') setFilterState(s => ({ ...s, maxPrice: undefined }));
+    else if (id === 'bedrooms') setFilterState(s => ({ ...s, bedrooms: undefined }));
+    else if (id.startsWith('tag_')) {
+      const tag = id.replace('tag_', '');
+      setFilterState(s => ({ ...s, tags: s.tags?.filter(t => t !== tag) }));
+    }
+    else if (id === 'city') setFilterState(s => ({ ...s, city: undefined }));
+    else if (id === 'proximity') setFilterState(s => ({ ...s, proximitySearch: false, latitude: undefined, longitude: undefined, radiusKm: undefined }));
   };
 
-  const fetchResults = async (query: string) => {
+  const fetchResults = async () => {
     try {
       setIsLoading(true);
       const data = await UserService.getProperties({
         page: 1,
         page_size: 20,
-        search: query,
-        category: params.category // Add category if needed
+        search: filterState.search || searchQuery,
+        category: filterState.category,
+        min_price: filterState.minPrice ? Number(filterState.minPrice) : undefined,
+        max_price: filterState.maxPrice ? Number(filterState.maxPrice) : undefined,
+        bedrooms: filterState.bedrooms,
+        city: filterState.city,
+        state: filterState.state,
+        country: filterState.country,
+        latitude: filterState.latitude ? Number(filterState.latitude) : undefined,
+        longitude: filterState.longitude ? Number(filterState.longitude) : undefined,
+        radius_km: filterState.radiusKm,
+        tags: filterState.tags?.join(','),
       });
       
       setTotalCount(data.count);
@@ -66,12 +112,12 @@ export default function SearchScreen() {
   };
 
   useEffect(() => {
-    // Debounce or trigger fetch when query changes
+    // Debounce or trigger fetch when query or filters change
     const timer = setTimeout(() => {
-      fetchResults(searchQuery);
+      fetchResults();
     }, 500);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, filterState]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -102,16 +148,16 @@ export default function SearchScreen() {
             </TouchableOpacity>
           )}
         </View>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setShowFilterModal(true)}>
           <Ionicons name="options-outline" size={24} color="#FFF" />
         </TouchableOpacity>
       </View>
 
       {/* Filter Chips */}
-      {filters.length > 0 && (
+      {activeChips.length > 0 && (
         <View style={styles.chipsContainer}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsScroll}>
-            {filters.map(filter => {
+            {activeChips.map(filter => {
               const isCategory = filter.type === 'category';
               return (
                 <View 
@@ -171,6 +217,20 @@ export default function SearchScreen() {
           />
         )}
       </View>
+
+      <FilterModal 
+        visible={showFilterModal} 
+        onClose={() => setShowFilterModal(false)} 
+        initialFilters={{ ...filterState, search: searchQuery }}
+        onApply={(filters) => {
+          if (filters.search !== undefined) {
+            setSearchQuery(filters.search);
+            setInputValue(filters.search);
+          }
+          setFilterState(filters);
+          setShowFilterModal(false);
+        }} 
+      />
     </View>
   );
 }
