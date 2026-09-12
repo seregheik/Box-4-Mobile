@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator, FlatList, Modal, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
 import { NearestProperty, UserService } from '@/services/user.service';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function PropertyDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -14,6 +16,9 @@ export default function PropertyDetailsScreen() {
   const [property, setProperty] = useState<NearestProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
+  
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -54,34 +59,54 @@ export default function PropertyDetailsScreen() {
     );
   }
 
+  const images = property?.images?.length 
+    ? property.images.map(img => img.image) 
+    : [property?.cover_photo || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'];
+
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const slideSize = event.nativeEvent.layoutMeasurement.width;
+    const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+    setActiveImageIndex(index);
+  };
+
   return (
     <View style={styles.container}>
+      {/* Fixed Top Actions */}
+      <View style={[styles.topActions, { top: Math.max(insets.top, 16), zIndex: 10 }]}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#1E293B" />
+        </TouchableOpacity>
+        <View style={styles.rightActions}>
+          <TouchableOpacity style={styles.actionButton}>
+            <Ionicons name="share-social" size={20} color="#1E293B" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={toggleSaved}>
+            <Ionicons 
+              name={isSaved ? "heart" : "heart-outline"} 
+              size={20} 
+              color={isSaved ? Colors.light.tintRed : "#1E293B"} 
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header Image Area */}
         <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: property.cover_photo || property.images?.[0]?.image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400' }} 
-            style={styles.image}
+          <FlatList 
+            data={images}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity activeOpacity={0.9} onPress={() => setIsFullScreen(true)}>
+                <Image source={{ uri: item }} style={[styles.image, { width: SCREEN_WIDTH }]} />
+              </TouchableOpacity>
+            )}
           />
-          
-          {/* Top Actions */}
-          <View style={[styles.topActions, { top: Math.max(insets.top, 16) }]}>
-            <TouchableOpacity style={styles.actionButton} onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color="#1E293B" />
-            </TouchableOpacity>
-            <View style={styles.rightActions}>
-              <TouchableOpacity style={styles.actionButton}>
-                <Ionicons name="share-social" size={20} color="#1E293B" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButton} onPress={toggleSaved}>
-                <Ionicons 
-                  name={isSaved ? "heart" : "heart-outline"} 
-                  size={20} 
-                  color={isSaved ? Colors.light.tintRed : "#1E293B"} 
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
 
           {/* Badges Overlay */}
           <View style={styles.badgesOverlay}>
@@ -100,10 +125,10 @@ export default function PropertyDetailsScreen() {
                 </View>
               )}
             </View>
-            {property.images && property.images.length > 0 && (
+            {images.length > 0 && (
               <View style={[styles.badge, { backgroundColor: 'rgba(0,0,0,0.6)' }]}>
                 <Ionicons name="images" size={10} color="#FFF" style={{ marginRight: 4 }} />
-                <Text style={styles.badgeText}>1/{property.images.length}</Text>
+                <Text style={styles.badgeText}>{activeImageIndex + 1}/{images.length}</Text>
               </View>
             )}
           </View>
@@ -250,6 +275,40 @@ export default function PropertyDetailsScreen() {
           <Ionicons name="arrow-forward" size={16} color="#FFF" />
         </TouchableOpacity>
       </View>
+
+      {/* Full Screen Image Modal */}
+      <Modal visible={isFullScreen} transparent={true} animationType="fade">
+        <View style={styles.fullScreenContainer}>
+          <TouchableOpacity 
+            style={[styles.closeButton, { top: Math.max(insets.top, 16) }]} 
+            onPress={() => setIsFullScreen(false)}
+          >
+            <Ionicons name="close" size={28} color="#FFF" />
+          </TouchableOpacity>
+          
+          <FlatList
+            data={images}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={activeImageIndex}
+            getItemLayout={(_, index) => ({
+              length: SCREEN_WIDTH,
+              offset: SCREEN_WIDTH * index,
+              index,
+            })}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={{ width: SCREEN_WIDTH, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <Image 
+                  source={{ uri: item }} 
+                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }} 
+                />
+              </View>
+            )}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -586,5 +645,18 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 14,
-  }
+  },
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 16,
+    zIndex: 20,
+    padding: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+  },
 });
