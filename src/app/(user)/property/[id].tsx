@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator, FlatList, Modal, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +9,38 @@ import { Colors } from '@/constants/theme';
 import { NearestProperty, UserService } from '@/services/user.service';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const ZoomableImage = ({ uri, width, height }: { uri: string, width: number, height: number }) => {
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
+
+  const pinch = Gesture.Pinch()
+    .onUpdate((e) => {
+      scale.value = Math.max(1, savedScale.value * e.scale);
+    })
+    .onEnd(() => {
+      if (scale.value < 1.05) {
+        scale.value = withTiming(1);
+        savedScale.value = 1;
+      } else {
+        savedScale.value = scale.value;
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <GestureDetector gesture={pinch}>
+      <Animated.Image 
+        source={{ uri }} 
+        style={[{ width, height, resizeMode: 'contain' }, animatedStyle]} 
+      />
+    </GestureDetector>
+  );
+};
 
 export default function PropertyDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -307,7 +341,8 @@ export default function PropertyDetailsScreen() {
 
       {/* Full Screen Image Modal */}
       <Modal visible={isFullScreen} transparent={true} animationType="fade" onRequestClose={() => setIsFullScreen(false)}>
-        <View style={styles.fullScreenContainer}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <View style={styles.fullScreenContainer}>
           <View style={[styles.fullScreenHeader, { top: Math.max(insets.top, 16) }]}>
             <TouchableOpacity 
               style={styles.closeButton} 
@@ -340,10 +375,7 @@ export default function PropertyDetailsScreen() {
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={{ width: SCREEN_WIDTH, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <Image 
-                  source={{ uri: item }} 
-                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }} 
-                />
+                <ZoomableImage uri={item} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} />
               </View>
             )}
           />
@@ -374,7 +406,8 @@ export default function PropertyDetailsScreen() {
               )}
             />
           </View>
-        </View>
+          </View>
+        </GestureHandlerRootView>
       </Modal>
     </View>
   );
