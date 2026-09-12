@@ -6,15 +6,23 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
-export function UserHeader() {
+interface UserHeaderProps {
+  city?: string | null;
+  state?: string | null;
+  profilePicture?: string | null;
+}
+
+export function UserHeader({ city, state, profilePicture }: UserHeaderProps) {
   const router = useRouter();
+
+  const locationText = [city, state].filter(Boolean).join(", ") || "Select Location";
 
   return (
     <View style={styles.container}>
       {/* Location Picker */}
       <TouchableOpacity style={styles.locationBadge}>
         <Ionicons name="location-sharp" size={14} color="#64748B" />
-        <ThemedText style={styles.locationText}>Benin City, Edo</ThemedText>
+        <ThemedText style={styles.locationText}>{locationText}</ThemedText>
         <Ionicons name="chevron-down" size={14} color="#64748B" />
       </TouchableOpacity>
 
@@ -31,7 +39,7 @@ export function UserHeader() {
         {/* User Avatar */}
         <TouchableOpacity onPress={() => router.push("/(user)/profile")}>
           <Image
-            source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+            source={{ uri: profilePicture || "https://i.pravatar.cc/150?img=11" }}
             style={styles.avatar}
           />
         </TouchableOpacity>

@@ -33,11 +33,13 @@ export default function UserHomeScreen() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   const { full_name } = useAuthStore();
-  const firstName = full_name?.split(" ")[0] || "User";
 
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(
     null,
   );
+  const dashboardFullName = dashboardData?.user_location?.full_name;
+  const firstName = (full_name || dashboardFullName)?.split(" ")[0] || "User";
+
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -87,8 +89,8 @@ export default function UserHomeScreen() {
       price: Number(p.price).toLocaleString(),
       priceUnit: "/ month",
       image: p.cover_photo,
-      badge: p.category,
-      isSaved: false,
+      badge: p.category_name || p.category,
+      isSaved: p.is_saved || false,
       bedrooms: p.bedrooms || 0,
       bathrooms: p.bathrooms || 0,
       size: p.total_rooms || 0,
@@ -103,8 +105,8 @@ export default function UserHomeScreen() {
     price: Number(p.price).toLocaleString(),
     priceUnit: "/ month",
     image: p.cover_photo,
-    badge: p.category,
-    isSaved: false,
+    badge: p.category_name || p.category,
+    isSaved: p.is_saved || false,
     bedrooms: p.bedrooms || 0,
     bathrooms: p.bathrooms || 0,
     size: p.total_rooms || 0,
@@ -130,7 +132,11 @@ export default function UserHomeScreen() {
           />
         }
       >
-        <UserHeader />
+        <UserHeader 
+          city={dashboardData?.user_location?.city} 
+          state={dashboardData?.user_location?.state}
+          profilePicture={dashboardData?.profile_picture || dashboardData?.user_location?.profile_picture}
+        />
 
         <View style={styles.greetingSection}>
           <ThemedText style={styles.greetingText}>

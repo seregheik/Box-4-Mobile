@@ -39,8 +39,21 @@ export interface NearestProperty {
   agent_name: string;
   title: string;
   category: string;
+  category_name?: string;
+  category_details?: {
+    id: string;
+    name: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  tag?: string[];
+  tags?: string[];
   price: string;
   address: string;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
   latitude: string;
   longitude: string;
   bedrooms: number;
@@ -52,9 +65,10 @@ export interface NearestProperty {
   is_published: boolean;
   is_boosted: boolean;
   is_featured: boolean;
+  is_saved?: boolean;
   views_count: number;
   inquiries_count: number;
-  cover_photo: string;
+  cover_photo: string | null;
   images: PropertyImage[];
   created_at: string;
   updated_at: string;
@@ -67,20 +81,20 @@ export interface TopAgent {
   full_name: string;
   role: string;
   phone_number: string;
-  profile_picture: string;
+  profile_picture: string | null;
   agency_name: string;
   license_number: string | null;
   rating: number;
   bio: string;
   date_joined: string;
   total_listings_count: number;
-  listings: any[];
+  listings: NearestProperty[];
 }
 
 export interface TopLocation {
   location: string;
   listings_count: number;
-  cover_photo: string;
+  cover_photo: string | null;
   avg_price: number;
 }
 
@@ -92,7 +106,11 @@ export interface PropertiesResponse {
 }
 
 export interface DashboardResponse {
+  profile_picture?: string | null;
   user_location: {
+    full_name?: string;
+    email?: string;
+    profile_picture?: string | null;
     latitude: string | null;
     longitude: string | null;
     city: string | null;
