@@ -167,7 +167,25 @@ export const UserService = {
     return response.data;
   },
 
-  getProperties: async (params: { page: number; page_size: number; category?: string; search?: string }): Promise<PropertiesResponse> => {
+  getProperties: async (params: { 
+    page?: number; 
+    page_size?: number; 
+    search?: string; 
+    q?: string;
+    category?: string; 
+    tag?: string;
+    tags?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    min_price?: number;
+    max_price?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    latitude?: number;
+    longitude?: number;
+    radius_km?: number;
+  }): Promise<PropertiesResponse> => {
     const response = await apiClient.get('/buyers/properties/', { params });
     return response.data;
   },

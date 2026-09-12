@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -147,7 +148,11 @@ export default function UserHomeScreen() {
           </ThemedText>
         </View>
 
-        <SearchBar />
+        <TouchableOpacity onPress={() => router.push('/(user)/search')} activeOpacity={0.9}>
+          <View pointerEvents="none">
+            <SearchBar />
+          </View>
+        </TouchableOpacity>
 
         <CategoryChips
           categories={CATEGORIES}

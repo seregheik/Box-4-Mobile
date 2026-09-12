@@ -96,6 +96,13 @@ export default function UserLayout() {
         }}
       />
       <Tabs.Screen
+        name="search"
+        options={{
+          href: null,
+          title: "Search",
+        }}
+      />
+      <Tabs.Screen
         name="property/[id]"
         options={{
           href: null,
