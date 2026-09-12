@@ -380,6 +380,12 @@ export default function PropertyDetailsScreen() {
             )}
           />
 
+          {/* Pinch to zoom hint */}
+          <View style={[styles.zoomHintContainer, { bottom: Math.max(insets.bottom, 16) + 90 }]}>
+            <Ionicons name="search-outline" size={14} color="#FFF" style={{ marginRight: 6 }} />
+            <Text style={styles.zoomHintText}>Pinch to zoom</Text>
+          </View>
+
           {/* Thumbnails at the bottom */}
           <View style={[styles.thumbnailContainer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
             <FlatList
@@ -788,5 +794,21 @@ const styles = StyleSheet.create({
   },
   activeThumbnail: {
     borderColor: Colors.light.tintRed,
+  },
+  zoomHintContainer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    zIndex: 20,
+  },
+  zoomHintText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
