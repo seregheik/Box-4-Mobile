@@ -88,6 +88,13 @@ export default function UserLayout() {
           title: "Edit Profile",
         }}
       />
+      <Tabs.Screen
+        name="properties"
+        options={{
+          href: null,
+          title: "Properties",
+        }}
+      />
     </Tabs>
   );
 }
