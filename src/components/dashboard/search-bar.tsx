@@ -3,7 +3,13 @@ import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Spacing } from '@/constants/theme';
 
-export function SearchBar() {
+interface SearchBarProps {
+  value?: string;
+  onChangeText?: (text: string) => void;
+  onSubmitEditing?: () => void;
+}
+
+export function SearchBar({ value, onChangeText, onSubmitEditing }: SearchBarProps) {
   return (
     <View style={styles.container}>
       <Ionicons name="search" size={20} color="#64748B" style={styles.searchIcon} />
@@ -12,6 +18,10 @@ export function SearchBar() {
         style={styles.input}
         placeholder="What are you looking for?"
         placeholderTextColor="#94A3B8"
+        value={value}
+        onChangeText={onChangeText}
+        onSubmitEditing={onSubmitEditing}
+        returnKeyType="search"
       />
       
       <View style={styles.divider} />

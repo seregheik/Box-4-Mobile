@@ -22,6 +22,7 @@ export interface Property {
 
 interface PropertyCardProps {
   property: Property;
+  fullWidth?: boolean;
 }
 
 function renderStars(rating: number) {
@@ -42,7 +43,7 @@ function renderStars(rating: number) {
   );
 }
 
-export function PropertyCard({ property }: PropertyCardProps) {
+export function PropertyCard({ property, fullWidth = false }: PropertyCardProps) {
   const [isSaved, setIsSaved] = useState(property.isSaved || false);
 
   const toggleSaved = async () => {
@@ -56,9 +57,9 @@ export function PropertyCard({ property }: PropertyCardProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, fullWidth && styles.fullWidthContainer]}>
       {/* Top Image Section */}
-      <View style={styles.imageContainer}>
+      <View style={[styles.imageContainer, fullWidth && styles.fullWidthImageContainer]}>
         <Image 
           source={{ uri: property.image }} 
           style={styles.image} 
@@ -145,10 +146,18 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     overflow: "hidden",
   },
+  fullWidthContainer: {
+    width: '100%',
+    marginRight: 0,
+    marginBottom: Spacing.four,
+  },
   imageContainer: {
     width: "100%",
     height: 120, // Drastically reduced
     backgroundColor: "#F3F4F6",
+  },
+  fullWidthImageContainer: {
+    height: 200,
   },
   image: {
     width: "100%",

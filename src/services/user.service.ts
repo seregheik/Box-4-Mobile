@@ -84,6 +84,13 @@ export interface TopLocation {
   avg_price: number;
 }
 
+export interface PropertiesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NearestProperty[];
+}
+
 export interface DashboardResponse {
   user_location: {
     latitude: string | null;
@@ -117,6 +124,11 @@ export const UserService = {
 
   toggleSavedProperty: async (id: string): Promise<any> => {
     const response = await apiClient.patch(`/buyers/saved/${id}/`);
+    return response.data;
+  },
+
+  getProperties: async (params: { page: number; page_size: number; category?: string; search?: string }): Promise<PropertiesResponse> => {
+    const response = await apiClient.get('/buyers/properties/', { params });
     return response.data;
   },
 

@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,6 +27,7 @@ import { useAuthStore } from "@/store/auth.store";
 const CATEGORIES = ["All", "Luxury", "Residential", "Commercial"];
 
 export default function UserHomeScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [activeCategory, setActiveCategory] = useState("All");
@@ -161,7 +162,7 @@ export default function UserHomeScreen() {
         {/* Properties */}
         {allProperties.length > 0 && (
           <>
-            <SectionHeader title="All Properties" actionText="view all" />
+            <SectionHeader title="All Properties" actionText="view all" onAction={() => router.push('/(user)/properties')} />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
