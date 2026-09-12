@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator, FlatList, Modal, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,7 +11,7 @@ import { NearestProperty, UserService } from '@/services/user.service';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const ZoomableImage = ({ uri, width, height }: { uri: string, width: number, height: number }) => {
+const ZoomableImage = ({ uri, width, height, isActive, onZoomChange }: { uri: string, width: number, height: number, isActive: boolean, onZoomChange: (zoomed: boolean) => void }) => {
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   
@@ -21,6 +21,27 @@ const ZoomableImage = ({ uri, width, height }: { uri: string, width: number, hei
   const savedTranslateY = useSharedValue(0);
   const focalX = useSharedValue(0);
   const focalY = useSharedValue(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      scale.value = withTiming(1);
+      translateX.value = withTiming(0);
+      translateY.value = withTiming(0);
+      savedScale.value = 1;
+      savedTranslateX.value = 0;
+      savedTranslateY.value = 0;
+      onZoomChange(false);
+    }
+  }, [isActive]);
+
+  const checkZoom = (currentScale: number) => {
+    'worklet';
+    if (currentScale > 1.05) {
+      runOnJS(onZoomChange)(true);
+    } else {
+      runOnJS(onZoomChange)(false);
+    }
+  };
 
   const pinch = Gesture.Pinch()
     .onStart((e) => {
@@ -44,10 +65,12 @@ const ZoomableImage = ({ uri, width, height }: { uri: string, width: number, hei
         savedScale.value = 1;
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
+        checkZoom(1);
       } else {
         savedScale.value = scale.value;
         savedTranslateX.value = translateX.value;
         savedTranslateY.value = translateY.value;
+        checkZoom(scale.value);
       }
     });
 
@@ -105,6 +128,7 @@ export default function PropertyDetailsScreen() {
   const [activeFullScreenIndex, setActiveFullScreenIndex] = useState(0);
   const fullScreenListRef = useRef<FlatList>(null);
   const mainListRef = useRef<FlatList>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const images = property?.images?.length 
     ? property.images.map(img => img.image) 
@@ -407,6 +431,7 @@ export default function PropertyDetailsScreen() {
             data={images}
             horizontal
             pagingEnabled
+            scrollEnabled={!isZoomed}
             showsHorizontalScrollIndicator={false}
             initialScrollIndex={activeImageIndex}
             onScroll={(event) => {
@@ -421,12 +446,46 @@ export default function PropertyDetailsScreen() {
               index,
             })}
             keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View style={{ width: SCREEN_WIDTH, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <ZoomableImage uri={item} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} />
+                <ZoomableImage 
+                  uri={item} 
+                  width={SCREEN_WIDTH} 
+                  height={SCREEN_HEIGHT} 
+                  isActive={index === activeFullScreenIndex}
+                  onZoomChange={setIsZoomed}
+                />
               </View>
             )}
           />
+
+          {/* Navigation Arrows when zoomed */}
+          {isZoomed && activeFullScreenIndex > 0 && (
+            <TouchableOpacity 
+              style={styles.navButtonLeft} 
+              onPress={() => {
+                const prevIndex = activeFullScreenIndex - 1;
+                setActiveFullScreenIndex(prevIndex);
+                fullScreenListRef.current?.scrollToIndex({ index: prevIndex, animated: true });
+                setIsZoomed(false);
+              }}
+            >
+              <Ionicons name="chevron-back" size={32} color="#FFF" />
+            </TouchableOpacity>
+          )}
+          {isZoomed && activeFullScreenIndex < images.length - 1 && (
+            <TouchableOpacity 
+              style={styles.navButtonRight} 
+              onPress={() => {
+                const nextIndex = activeFullScreenIndex + 1;
+                setActiveFullScreenIndex(nextIndex);
+                fullScreenListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+                setIsZoomed(false);
+              }}
+            >
+              <Ionicons name="chevron-forward" size={32} color="#FFF" />
+            </TouchableOpacity>
+          )}
 
           {/* Pinch to zoom hint */}
           <View style={[styles.zoomHintContainer, { bottom: Math.max(insets.bottom, 16) + 90 }]}>
@@ -858,5 +917,25 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontWeight: '600',
+  },
+  navButtonLeft: {
+    position: 'absolute',
+    left: 16,
+    top: '50%',
+    marginTop: -24,
+    zIndex: 30,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 24,
+    padding: 8,
+  },
+  navButtonRight: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    marginTop: -24,
+    zIndex: 30,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 24,
+    padding: 8,
   },
 });
