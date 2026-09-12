@@ -14,26 +14,74 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ZoomableImage = ({ uri, width, height }: { uri: string, width: number, height: number }) => {
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
+  
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const savedTranslateX = useSharedValue(0);
+  const savedTranslateY = useSharedValue(0);
+  const focalX = useSharedValue(0);
+  const focalY = useSharedValue(0);
 
   const pinch = Gesture.Pinch()
+    .onStart((e) => {
+      focalX.value = e.focalX - width / 2;
+      focalY.value = e.focalY - height / 2;
+    })
     .onUpdate((e) => {
       scale.value = Math.max(1, savedScale.value * e.scale);
+      
+      const newTranslateX = focalX.value - focalX.value * (scale.value / savedScale.value);
+      const newTranslateY = focalY.value - focalY.value * (scale.value / savedScale.value);
+      
+      translateX.value = savedTranslateX.value + newTranslateX;
+      translateY.value = savedTranslateY.value + newTranslateY;
     })
     .onEnd(() => {
       if (scale.value < 1.05) {
         scale.value = withTiming(1);
+        translateX.value = withTiming(0);
+        translateY.value = withTiming(0);
         savedScale.value = 1;
+        savedTranslateX.value = 0;
+        savedTranslateY.value = 0;
       } else {
         savedScale.value = scale.value;
+        savedTranslateX.value = translateX.value;
+        savedTranslateY.value = translateY.value;
       }
     });
 
+  const pan = Gesture.Pan()
+    .onUpdate((e) => {
+      if (scale.value > 1) {
+        translateX.value = savedTranslateX.value + e.translationX;
+        translateY.value = savedTranslateY.value + e.translationY;
+      }
+    })
+    .onEnd(() => {
+      if (scale.value <= 1) {
+        translateX.value = withTiming(0);
+        translateY.value = withTiming(0);
+        savedTranslateX.value = 0;
+        savedTranslateY.value = 0;
+      } else {
+        savedTranslateX.value = translateX.value;
+        savedTranslateY.value = translateY.value;
+      }
+    });
+
+  const composed = Gesture.Simultaneous(pinch, pan);
+
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value }
+    ]
   }));
 
   return (
-    <GestureDetector gesture={pinch}>
+    <GestureDetector gesture={composed}>
       <Animated.Image 
         source={{ uri }} 
         style={[{ width, height, resizeMode: 'contain' }, animatedStyle]} 
