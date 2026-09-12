@@ -10,9 +10,11 @@ import {
   Switch,
   PanResponder,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Spacing } from '@/constants/theme';
 import { UserService, Category } from '@/services/user.service';
@@ -85,6 +87,29 @@ export function FilterModal({ visible, onClose, onApply, initialFilters }: Filte
       setRadiusKm(initialFilters.radiusKm || 10);
     }
   }, [visible, initialFilters]);
+
+  useEffect(() => {
+    if (proximityEnabled && (!latitude || !longitude)) {
+      (async () => {
+        try {
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Allow location access to use proximity search.');
+            setProximityEnabled(false);
+            return;
+          }
+
+          let location = await Location.getCurrentPositionAsync({});
+          setLatitude(location.coords.latitude.toFixed(6));
+          setLongitude(location.coords.longitude.toFixed(6));
+        } catch (error) {
+          console.warn('Error fetching location:', error);
+          Alert.alert('Location Error', 'Unable to fetch your location.');
+          setProximityEnabled(false);
+        }
+      })();
+    }
+  }, [proximityEnabled]);
 
   const fetchCategories = async () => {
     try {
