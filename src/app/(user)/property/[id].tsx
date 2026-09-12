@@ -22,12 +22,28 @@ export default function PropertyDetailsScreen() {
 
   const [activeFullScreenIndex, setActiveFullScreenIndex] = useState(0);
   const fullScreenListRef = useRef<FlatList>(null);
+  const mainListRef = useRef<FlatList>(null);
+
+  const images = property?.images?.length 
+    ? property.images.map(img => img.image) 
+    : [property?.cover_photo || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'];
 
   useEffect(() => {
     if (isFullScreen) {
       setActiveFullScreenIndex(activeImageIndex);
     }
-  }, [isFullScreen]);
+  }, [isFullScreen, activeImageIndex]);
+
+  useEffect(() => {
+    if (images.length <= 1 || isFullScreen) return;
+
+    const timer = setTimeout(() => {
+      const nextIndex = activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1;
+      mainListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [activeImageIndex, images.length, isFullScreen]);
 
   useEffect(() => {
     if (id) {
@@ -68,9 +84,7 @@ export default function PropertyDetailsScreen() {
     );
   }
 
-  const images = property?.images?.length 
-    ? property.images.map(img => img.image) 
-    : [property?.cover_photo || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'];
+
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
@@ -103,11 +117,17 @@ export default function PropertyDetailsScreen() {
         {/* Header Image Area */}
         <View style={styles.imageContainer}>
           <FlatList 
+            ref={mainListRef}
             data={images}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={onScroll}
+            getItemLayout={(_, index) => ({
+              length: SCREEN_WIDTH,
+              offset: SCREEN_WIDTH * index,
+              index,
+            })}
             scrollEventThrottle={16}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
