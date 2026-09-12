@@ -98,6 +98,21 @@ export interface TopLocation {
   avg_price: number;
 }
 
+export interface SavedProperty {
+  id: string;
+  buyer: string;
+  listing: string;
+  listing_details: NearestProperty;
+  created_at: string;
+}
+
+export interface SavedPropertyResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SavedProperty[];
+}
+
 export interface PropertiesResponse {
   count: number;
   next: string | null;
@@ -144,6 +159,11 @@ export const UserService = {
     const response = await apiClient.post(`/buyers/saved/`, {
       listing_id: id,
     });
+    return response.data;
+  },
+
+  getSavedProperties: async (): Promise<SavedPropertyResponse> => {
+    const response = await apiClient.get('/buyers/saved/');
     return response.data;
   },
 
