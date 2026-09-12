@@ -114,7 +114,7 @@ const ZoomableImage = ({ uri, width, height, isActive, onZoomChange }: { uri: st
 };
 
 export default function PropertyDetailsScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, returnTo } = useLocalSearchParams<{ id: string; returnTo?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   
@@ -202,7 +202,13 @@ export default function PropertyDetailsScreen() {
     <View style={styles.container}>
       {/* Fixed Top Actions */}
       <View style={[styles.topActions, { top: Math.max(insets.top, 16), zIndex: 10 }]}>
-        <TouchableOpacity style={styles.actionButton} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => {
+          if (returnTo) {
+            router.push(returnTo as any);
+          } else {
+            router.back();
+          }
+        }}>
           <Ionicons name="arrow-back" size={24} color="#1E293B" />
         </TouchableOpacity>
         <View style={styles.rightActions}>

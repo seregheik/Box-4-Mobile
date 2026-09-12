@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { Colors, Spacing } from '@/constants/theme';
 import { UserService } from '@/services/user.service';
 
@@ -46,6 +46,7 @@ function renderStars(rating: number) {
 
 export function PropertyCard({ property, fullWidth = false }: PropertyCardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isSaved, setIsSaved] = useState(property.isSaved || false);
 
   const toggleSaved = async () => {
@@ -62,7 +63,7 @@ export function PropertyCard({ property, fullWidth = false }: PropertyCardProps)
     <TouchableOpacity 
       style={[styles.container, fullWidth && styles.fullWidthContainer]}
       activeOpacity={0.9}
-      onPress={() => router.push(`/(user)/property/${property.id}`)}
+      onPress={() => router.push(`/(user)/property/${property.id}?returnTo=${encodeURIComponent(pathname)}`)}
     >
       {/* Top Image Section */}
       <View style={[styles.imageContainer, fullWidth && styles.fullWidthImageContainer]}>
