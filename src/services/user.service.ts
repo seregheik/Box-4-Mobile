@@ -141,7 +141,9 @@ export const UserService = {
   },
 
   toggleSavedProperty: async (id: string): Promise<any> => {
-    const response = await apiClient.patch(`/buyers/saved/${id}/`);
+    const response = await apiClient.post(`/buyers/saved/`, {
+      listing_id: id,
+    });
     return response.data;
   },
 
