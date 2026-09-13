@@ -183,7 +183,7 @@ export default function UserHomeScreen() {
         {/* Properties */}
         {allProperties.length > 0 && (
           <>
-            <SectionHeader title="All Properties" actionText="view all" onAction={() => router.push('/(user)/properties')} />
+            <SectionHeader title="All Properties" actionText="view all" onAction={() => router.push('/(user)/search')} />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
